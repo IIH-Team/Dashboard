@@ -487,12 +487,14 @@ function buildCards() {
     const nextLines = d.next.split('\n').filter(Boolean).map(l=>`<div>${l.replace(/^\*\s*/,'• ')}</div>`).join('');
     return `<div class="proj-card ${rClass}" onclick="openModal(${DATA.indexOf(d)})">
       <div class="proj-head">
-        <div class="proj-name">${d.name}</div>
+        <div>
+          <div class="proj-name">${d.name}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">${d.phase}</div>
+        </div>
         <div style="width:38px;height:38px;border-radius:50%;background:${pctColor(d.pct)};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:${pctText(d.pct)};flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.15);border:1.5px solid rgba(0,0,0,0.08)">${d.pct}%</div>
       </div>
       <div class="proj-meta">
         ${riskBadge(d.risk)}
-        <span style="font-size:12px;color:var(--text2)">${d.phase}</span>
         <span style="font-size:11px;color:${SECTOR_COLORS[d.sector]||'#888'};font-weight:600">${d.sector}</span>
       </div>
       <div class="proj-body">
