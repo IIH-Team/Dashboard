@@ -286,11 +286,11 @@
     <table id="main-table">
       <thead>
         <tr>
-          <th>Sector</th>
+          <th style="width:120px">Sector</th>
           <th>Solution</th>
-          <th style="text-align:right">% Done</th>
-          <th>Phase</th>
-          <th>Risk</th>
+          <th style="width:100px;text-align:center">% Done</th>
+          <th style="width:160px">Phase</th>
+          <th style="width:100px">Risk</th>
         </tr>
       </thead>
       <tbody id="table-body"></tbody>
@@ -386,9 +386,9 @@ function pctText(p) {
   return '#444444';
 }
 function progFill(p) {
-  return `<div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
-    <div style="width:14px;height:14px;border-radius:50%;background:${pctColor(p)};border:1.5px solid rgba(0,0,0,0.08);flex-shrink:0"></div>
-    <span style="font-size:13px;font-weight:700;color:var(--text);min-width:36px;text-align:right">${p}%</span>
+  return `<div style="display:inline-flex;align-items:center;gap:5px;justify-content:center">
+    <div style="width:13px;height:13px;border-radius:50%;background:${pctColor(p)};border:1.5px solid rgba(0,0,0,0.08);flex-shrink:0"></div>
+    <span style="font-size:13px;font-weight:700;color:var(--text)">${p}%</span>
   </div>`;
 }
 
@@ -450,7 +450,7 @@ function buildTable(filter='All', search='') {
     <tr onclick="openModal(${DATA.indexOf(d)})">
       <td class="sector-cell" style="color:${SECTOR_COLORS[d.sector]||'#888'}">${d.sector}</td>
       <td style="font-weight:500">${d.name}</td>
-      <td>${progFill(d.pct)}</td>
+      <td style="text-align:center">${progFill(d.pct)}</td>
       <td>${phaseBadge(d.phase)}</td>
       <td>${riskBadge(d.risk)}</td>
     </tr>`).join('');
