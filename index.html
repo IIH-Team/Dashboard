@@ -288,7 +288,7 @@
         <tr>
           <th>Sector</th>
           <th>Solution</th>
-          <th>% Done</th>
+          <th style="text-align:right">% Done</th>
           <th>Phase</th>
           <th>Risk</th>
         </tr>
@@ -386,9 +386,9 @@ function pctText(p) {
   return '#444444';
 }
 function progFill(p) {
-  return `<div style="display:flex;align-items:center;gap:6px">
-    <span style="font-size:13px;font-weight:700;color:var(--text)">${p}%</span>
+  return `<div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
     <div style="width:14px;height:14px;border-radius:50%;background:${pctColor(p)};border:1.5px solid rgba(0,0,0,0.08);flex-shrink:0"></div>
+    <span style="font-size:13px;font-weight:700;color:var(--text);min-width:36px;text-align:right">${p}%</span>
   </div>`;
 }
 
