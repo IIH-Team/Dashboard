@@ -630,18 +630,18 @@ function openModal(idx) {
       <!-- LEFT COLUMN -->
       <div style="display:flex;flex-direction:column">
         <!-- Two KPI boxes -->
-        <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:0">
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:0;align-items:stretch">
           <!-- Big box: % + phase + progress bar -->
-          <div style="background:var(--bg);border-radius:10px;padding:10px 16px;position:relative;overflow:hidden">
-            <div style="font-size:32px;font-weight:800;color:${pctColor(d.pct)};line-height:1">${d.pct}%</div>
-            <div style="font-size:12px;font-weight:600;color:var(--text2);margin-top:4px">${phaseName}</div>
+          <div style="background:var(--bg);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;height:80px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:32px;font-weight:800;color:${pctColor(d.pct)};line-height:1;text-shadow:0 1px 4px rgba(0,0,0,0.15)">${d.pct}%</div>
+            <div style="font-size:11px;font-weight:600;color:var(--text3)">${phaseName}</div>
             <!-- Progress bar at bottom of box -->
             <div style="position:absolute;bottom:0;left:0;right:0;height:5px;background:#e0e0e0">
               <div style="width:${d.pct}%;height:100%;background:${pctColor(d.pct)}"></div>
             </div>
           </div>
           <!-- Small box: Risk -->
-          <div style="background:var(--bg);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:center">
+          <div style="background:var(--bg);border-radius:10px;padding:14px 12px;display:flex;align-items:center;justify-content:center;height:80px;box-sizing:border-box">
             <div style="font-size:13px;font-weight:700;color:${riskColor};text-align:center">${d.risk}</div>
           </div>
         </div>
@@ -669,7 +669,7 @@ function openModal(idx) {
       <!-- RIGHT COLUMN -->
       <div style="border-left:1px solid var(--border);padding-left:16px;display:flex;flex-direction:column;gap:12px">
         <!-- Description -->
-        <div style="background:var(--bg);border-radius:8px;padding:12px 14px;min-height:72px">
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px;min-height:80px">
           <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Description</div>
           <div style="font-size:12px;color:var(--text2);line-height:1.6">${d.desc||'<span style="color:var(--text3);font-style:italic">—</span>'}</div>
         </div>
