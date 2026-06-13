@@ -520,7 +520,17 @@ function buildCards() {
 }
 
 // Gantt timeline - 12 months 2026, today = Jun 9
-const TODAY_MONTH = 5.3; // June ~9th = month index 5.3
+// Dynamic "today" position based on actual current date within 2026
+function getTodayMonthPosition() {
+  const now = new Date();
+  const year = now.getFullYear();
+  // If we're not in 2026, default to a reasonable position (won't normally happen)
+  const startOfYear = new Date(year, 0, 1);
+  const daysInYear = (new Date(year, 11, 31) - startOfYear) / 86400000 + 1;
+  const dayOfYear = (now - startOfYear) / 86400000;
+  return (dayOfYear / daysInYear) * 12;
+}
+const TODAY_MONTH = getTodayMonthPosition();
 const TOTAL_MONTHS = 12;
 // Phase approximate start/end months for each phase type
 const PHASE_GANTT = {
@@ -587,7 +597,8 @@ function buildTimeline(phase, pct) {
     </div>`;
   });
   // Today label
-  html += `<div style="display:grid;grid-template-columns:90px 1fr"><div></div><div style="position:relative;height:14px"><div style="position:absolute;left:${todayPct}%;transform:translateX(-50%);font-size:8px;font-weight:700;color:#C0504D;white-space:nowrap">Today — Jun 09</div></div></div>`;
+  const todayLabel = new Date().toLocaleDateString('en-US', {month:'short', day:'2-digit'});
+  html += `<div style="display:grid;grid-template-columns:90px 1fr"><div></div><div style="position:relative;height:14px"><div style="position:absolute;left:${todayPct}%;transform:translateX(-50%);font-size:8px;font-weight:700;color:#C0504D;white-space:nowrap">Today — ${todayLabel}</div></div></div>`;
   html += '</div>';
   return html;
 }
