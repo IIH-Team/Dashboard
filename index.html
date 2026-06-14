@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MOMAH AI Solutions Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
   :root {
     --navy: #1B2A4A;
@@ -53,7 +54,7 @@
   .section.active { display: block; }
 
   /* KPI CARDS ROW */
-  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 20px; }
   .kpi-card { background: var(--card); border-radius: 10px; border: 1px solid var(--border); padding: 16px 18px; }
   .kpi-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
   .kpi-value { font-size: 30px; font-weight: 700; line-height: 1; }
@@ -72,6 +73,12 @@
   .s-green { background: var(--green); }
   .s-amber { background: var(--amber); }
   .s-red { background: var(--red); }
+
+  .risk-stack-card { background: var(--card); border-radius: 10px; border: 1px solid var(--border); padding: 6px; display: flex; flex-direction: column; gap: 4px; height: 100%; box-sizing: border-box; }
+  .risk-strip { flex: 1; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: #fff; font-size: 11px; font-weight: 700; }
+  .risk-strip .rs-num { font-size: 15px; font-weight: 800; }
+  .kpi-card { height: 100%; box-sizing: border-box; }
+
 
   /* CHARTS ROW */
   .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
@@ -242,12 +249,11 @@
     <div class="kpi-card"><div class="kpi-label">BRD In Progress</div><div class="kpi-value kv-blue">3</div><div class="kpi-sub">Active development</div></div>
     <div class="kpi-card"><div class="kpi-label">Scoping</div><div class="kpi-value kv-purple">6</div><div class="kpi-sub">Requirements phase</div></div>
     <div class="kpi-card"><div class="kpi-label">Avg Completion</div><div class="kpi-value kv-pink" id="avg-pct">—</div><div class="kpi-sub">Overall portfolio</div></div>
-  </div>
-
-  <div class="status-row">
-    <div class="status-card s-green"><div class="s-label">ON TRACK</div><div class="s-num">23</div></div>
-    <div class="status-card s-amber"><div class="s-label">AT RISK</div><div class="s-num">2</div></div>
-    <div class="status-card s-red"><div class="s-label">DELAYED</div><div class="s-num">1</div></div>
+    <div class="risk-stack-card">
+      <div class="risk-strip s-green"><span>ON TRACK</span><span class="rs-num" id="risk-ontrack">—</span></div>
+      <div class="risk-strip s-amber"><span>AT RISK</span><span class="rs-num" id="risk-atrisk">—</span></div>
+      <div class="risk-strip s-red"><span>DELAYED</span><span class="rs-num" id="risk-delayed">—</span></div>
+    </div>
   </div>
 
   <div class="charts-row">
@@ -451,11 +457,15 @@ function progFill(p) {
 document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 
 // AVG PCT
-const REAL_DATA = DATA.filter(d=>!d.isUmbrella);
+const REAL_DATA = DATA.filter(d=>!d.isUmbrella && !SUB_PROJECTS['AI Legal Advisor v2.0'].includes(d.name));
 const avg = Math.round(REAL_DATA.reduce((s,d)=>s+d.pct,0)/REAL_DATA.length);
 document.getElementById('avg-pct').textContent = avg + '%';
+document.getElementById('risk-ontrack').textContent = REAL_DATA.filter(d=>d.risk==='On Track').length;
+document.getElementById('risk-atrisk').textContent = REAL_DATA.filter(d=>d.risk==='At Risk').length;
+document.getElementById('risk-delayed').textContent = REAL_DATA.filter(d=>d.risk==='Delayed').length;
 
 // CHARTS
+Chart.register(ChartDataLabels);
 window.addEventListener('load', () => {
   // Sector bar chart
   const sectors = ["HEM Office","Housing","E&C","Municipal Affairs","Shared Services"];
@@ -469,7 +479,10 @@ window.addEventListener('load', () => {
       labels: sectors.map(s=>s.replace(' Office','').replace(' Affairs','')),
       datasets: [{ data: sectorAvg, backgroundColor: sectors.map(s=>SECTOR_COLORS[s]||'#888'), borderRadius: 6, borderSkipped: false }]
     },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    options: { responsive:true, maintainAspectRatio:false, plugins:{
+      legend:{display:false},
+      datalabels:{ anchor:'end', align:'bottom', font:{size:11,weight:'700'}, color:'#fff', formatter:v=>v+'%' }
+    },
       scales:{ y:{max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'#E8EEF5'}}, x:{ticks:{font:{size:11}},grid:{display:false}} } }
   });
 
@@ -479,7 +492,10 @@ window.addEventListener('load', () => {
   new Chart(document.getElementById('phaseChart'), {
     type: 'doughnut',
     data: { labels: Object.keys(phases), datasets:[{ data:Object.values(phases), backgroundColor:['#00845A','#378ADD','#7F77DD','#E88B00','#9B59B6'], borderWidth:2, borderColor:'#fff', hoverOffset:4 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ font:{size:11}, boxWidth:12, padding:10 } } }, cutout:'58%' }
+    options: { responsive:true, maintainAspectRatio:false, plugins:{
+      legend:{ position:'right', labels:{ font:{size:11}, boxWidth:12, padding:10 } },
+      datalabels:{ color:'#fff', font:{size:13,weight:'700'}, formatter:v=>v>0?v:'' }
+    }, cutout:'58%' }
   });
 
   // Weekly bar
