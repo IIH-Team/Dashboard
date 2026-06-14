@@ -496,7 +496,7 @@ window.addEventListener('load', () => {
 });
 
 // TABLE
-function tableRowHtml(d) {
+function tableRowHtml(d, isLast) {
   const sub = isSubProject(d.name);
   const umbrella = isUmbrellaParent(d.name) || d.isUmbrella;
   const rowStyle = sub ? 'background:#F4F4F4' : '';
@@ -512,7 +512,12 @@ function tableRowHtml(d) {
       <td></td>
     </tr>`;
   }
-  const lineSpan = sub ? `<span style="position:absolute;left:14px;top:0;bottom:0;width:2px;background:#B8C4D0"></span>` : '';
+  let lineSpan = '';
+  if(sub) {
+    // Vertical line (full or half height for last item) + small horizontal branch to each sub-project
+    const vHeight = isLast ? '50%' : '100%';
+    lineSpan = `<span style="position:absolute;left:14px;top:0;height:${vHeight};width:2px;background:#B8C4D0"></span><span style="position:absolute;left:14px;top:50%;width:8px;height:2px;background:#B8C4D0"></span>`;
+  }
   return `
     <tr style="${rowStyle}" onclick="openModal(${DATA.indexOf(d)})">
       <td class="sector-cell" style="color:${SECTOR_COLORS[d.sector]||'#888'}">${d.sector}</td>
@@ -522,12 +527,19 @@ function tableRowHtml(d) {
       <td>${riskBadge(d.risk)}</td>
     </tr>`;
 }
+function renderRows(rows) {
+  return rows.map((d,i)=>{
+    const next = rows[i+1];
+    const isLastSub = isSubProject(d.name) && (!next || !isSubProject(next.name) || ALL_SUB_NAMES.indexOf(next.name) < ALL_SUB_NAMES.indexOf(d.name));
+    return tableRowHtml(d, isLastSub);
+  }).join('');
+}
 function buildTable(filter='All', search='') {
   const tbody = document.getElementById('table-body');
   let rows = [...DATA].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
   if(filter!=='All') rows = rows.filter(d=>d.risk===filter || d.isUmbrella);
   if(search) rows = rows.filter(d=>d.name.toLowerCase().includes(search.toLowerCase())||d.sector.toLowerCase().includes(search.toLowerCase()));
-  tbody.innerHTML = rows.map(tableRowHtml).join('');
+  tbody.innerHTML = renderRows(rows);
 }
 buildTable();
 buildSplitTables();
@@ -537,8 +549,8 @@ function buildSplitTables() {
   // Part 1 = all HEM Office solutions (incl. umbrella), Part 2 = everything else
   const part1 = rows.filter(d=>d.sector==='HEM Office');
   const part2 = rows.filter(d=>d.sector!=='HEM Office');
-  document.getElementById('table-body-1').innerHTML = part1.map(tableRowHtml).join('');
-  document.getElementById('table-body-2').innerHTML = part2.map(tableRowHtml).join('');
+  document.getElementById('table-body-1').innerHTML = renderRows(part1);
+  document.getElementById('table-body-2').innerHTML = renderRows(part2);
 }
 
 let activeRisk = 'All';
