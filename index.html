@@ -227,6 +227,7 @@
   <div class="nav-tab active" onclick="showSection('overview')">Overview</div>
   <div class="nav-tab" onclick="showSection('portfolio')">Portfolio</div>
   <div class="nav-tab" onclick="showSection('projects')">Projects</div>
+  <div class="nav-tab" onclick="showSection('projects2')">Projects 2</div>
   <div class="nav-tab" onclick="showSection('weekly')">Weekly Delta</div>
   <div class="nav-tab" onclick="showSection('risks')">Risks & Actions</div>
 </div>
@@ -298,10 +299,16 @@
   </div>
 </div>
 
-<!-- PROJECTS -->
+<!-- PROJECTS (no timeline) -->
 <div class="section" id="sec-projects">
   <div class="sector-nav" id="sector-nav"></div>
   <div class="projects-grid" id="projects-grid"></div>
+</div>
+
+<!-- PROJECTS 2 (with timeline) -->
+<div class="section" id="sec-projects2">
+  <div class="sector-nav" id="sector-nav2"></div>
+  <div class="projects-grid" id="projects-grid2"></div>
 </div>
 
 <!-- WEEKLY DELTA -->
@@ -471,23 +478,28 @@ function filterTable(v) { buildTable(activeRisk, v); }
 // SECTOR NAV + CARDS
 let activeSector = 'All';
 function buildSectorNav() {
-  document.getElementById('sector-nav').innerHTML = SECTORS.map(s=>`<div class="sector-pill${s==='All'?' active':''}" onclick="setSector('${s}',this)">${s}</div>`).join('');
+  const html = SECTORS.map(s=>`<div class="sector-pill${s==='All'?' active':''}" onclick="setSector('${s}',this)">${s}</div>`).join('');
+  document.getElementById('sector-nav').innerHTML = html;
+  document.getElementById('sector-nav2').innerHTML = SECTORS.map(s=>`<div class="sector-pill${s==='All'?' active':''}" onclick="setSector2('${s}',this)">${s}</div>`).join('');
 }
 function setSector(s, el) {
   activeSector = s;
-  document.querySelectorAll('.sector-pill').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#sector-nav .sector-pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   buildCards();
 }
-function buildCards() {
-  const SECTOR_ORDER = ["HEM Office","Housing","E&C","Municipal Affairs","Shared Services"];
-  const rawItems = activeSector==='All' ? DATA : DATA.filter(d=>d.sector===activeSector);
-  const items = [...rawItems].sort((a,b)=>SECTOR_ORDER.indexOf(a.sector)-SECTOR_ORDER.indexOf(b.sector));
-  document.getElementById('projects-grid').innerHTML = items.map((d,i)=>{
-    const rClass = d.risk==='Delayed'?'risk-delayed':d.risk==='At Risk'?'risk-atrisk':'risk-ontrack';
-    const pastLines = d.past.split('\n').filter(Boolean).map(l=>`<div>${l.replace(/^\*\s*/,'• ')}</div>`).join('');
-    const nextLines = d.next.split('\n').filter(Boolean).map(l=>`<div>${l.replace(/^\*\s*/,'• ')}</div>`).join('');
-    return `<div class="proj-card ${rClass}" onclick="openModal(${DATA.indexOf(d)})">
+let activeSector2 = 'All';
+function setSector2(s, el) {
+  activeSector2 = s;
+  document.querySelectorAll('#sector-nav2 .sector-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  buildCards2();
+}
+function buildCardHtml(d, withTimeline) {
+  const rClass = d.risk==='Delayed'?'risk-delayed':d.risk==='At Risk'?'risk-atrisk':'risk-ontrack';
+  const pastLines = d.past.split('\n').filter(Boolean).map(l=>`<div>${l.replace(/^\*\s*/,'• ')}</div>`).join('');
+  const nextLines = d.next.split('\n').filter(Boolean).map(l=>`<div>${l.replace(/^\*\s*/,'• ')}</div>`).join('');
+  return `<div class="proj-card ${rClass}" onclick="openModal(${DATA.indexOf(d)})">
       <div class="proj-head">
         <div>
           <div class="proj-name">${d.name}</div>
@@ -510,13 +522,24 @@ function buildCards() {
           <div class="proj-text">${nextLines||'—'}</div>
         </div>
       </div>
-      ${buildTimeline(d.phase, d.pct)}
+      ${withTimeline ? buildTimeline(d.phase, d.pct) : ''}
       <div class="proj-owners">
         <div class="owner-item"><span class="owner-label">Owner: </span>${d.owner}</div>
         <div class="owner-item"><span class="owner-label">Champion: </span>${d.champion}</div>
       </div>
     </div>`;
-  }).join('');
+}
+function buildCards() {
+  const SECTOR_ORDER = ["HEM Office","Housing","E&C","Municipal Affairs","Shared Services"];
+  const rawItems = activeSector==='All' ? DATA : DATA.filter(d=>d.sector===activeSector);
+  const items = [...rawItems].sort((a,b)=>SECTOR_ORDER.indexOf(a.sector)-SECTOR_ORDER.indexOf(b.sector));
+  document.getElementById('projects-grid').innerHTML = items.map(d=>buildCardHtml(d, false)).join('');
+}
+function buildCards2() {
+  const SECTOR_ORDER = ["HEM Office","Housing","E&C","Municipal Affairs","Shared Services"];
+  const rawItems = activeSector2==='All' ? DATA : DATA.filter(d=>d.sector===activeSector2);
+  const items = [...rawItems].sort((a,b)=>SECTOR_ORDER.indexOf(a.sector)-SECTOR_ORDER.indexOf(b.sector));
+  document.getElementById('projects-grid2').innerHTML = items.map(d=>buildCardHtml(d, true)).join('');
 }
 
 // Gantt timeline - 12 months 2026, today = Jun 9
@@ -603,7 +626,7 @@ function buildTimeline(phase, pct) {
   return html;
 }
 
-buildSectorNav(); buildCards();
+buildSectorNav(); buildCards(); buildCards2();
 
 // RISKS
 function buildRisks() {
