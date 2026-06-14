@@ -297,6 +297,43 @@
       <tbody id="table-body"></tbody>
     </table>
   </div>
+
+  <!-- SPLIT TABLES FOR PPT EXPORT -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <h3>Portfolio — Part 1 of 2 (for PowerPoint)</h3>
+    </div>
+    <table id="split-table-1">
+      <thead>
+        <tr>
+          <th style="width:130px">Sector</th>
+          <th style="width:320px">Solution</th>
+          <th style="width:90px">% Done</th>
+          <th style="width:150px">Phase</th>
+          <th style="width:100px">Risk</th>
+        </tr>
+      </thead>
+      <tbody id="table-body-1"></tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <h3>Portfolio — Part 2 of 2 (for PowerPoint)</h3>
+    </div>
+    <table id="split-table-2">
+      <thead>
+        <tr>
+          <th style="width:130px">Sector</th>
+          <th style="width:320px">Solution</th>
+          <th style="width:90px">% Done</th>
+          <th style="width:150px">Phase</th>
+          <th style="width:100px">Risk</th>
+        </tr>
+      </thead>
+      <tbody id="table-body-2"></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- PROJECTS (no timeline) -->
@@ -465,6 +502,39 @@ function buildTable(filter='All', search='') {
     </tr>`).join('');
 }
 buildTable();
+buildSplitTables();
+
+function buildSplitTables() {
+  const SECTOR_ORDER = ["HEM Office","Housing","E&C","Municipal Affairs","Shared Services"];
+  let rows = [...DATA].sort((a,b)=>SECTOR_ORDER.indexOf(a.sector)-SECTOR_ORDER.indexOf(b.sector));
+  // Part 1 = all HEM Office solutions, Part 2 = everything else
+  const part1 = rows.filter(d=>d.sector==='HEM Office');
+  const part2 = rows.filter(d=>d.sector!=='HEM Office');
+  const rowHtml = d => `
+    <tr onclick="openModal(${'${DATA.indexOf(d)}'})">
+      <td class="sector-cell" style="color:${'${SECTOR_COLORS[d.sector]||\'#888\'}'}">${'${d.sector}'}</td>
+      <td style="font-weight:500">${'${d.name}'}</td>
+      <td>${'${progFill(d.pct)}'}</td>
+      <td>${'${phaseBadge(d.phase)}'}</td>
+      <td>${'${riskBadge(d.risk)}'}</td>
+    </tr>`;
+  document.getElementById('table-body-1').innerHTML = part1.map(d=>`
+    <tr onclick="openModal(${DATA.indexOf(d)})">
+      <td class="sector-cell" style="color:${SECTOR_COLORS[d.sector]||'#888'}">${d.sector}</td>
+      <td style="font-weight:500">${d.name}</td>
+      <td>${progFill(d.pct)}</td>
+      <td>${phaseBadge(d.phase)}</td>
+      <td>${riskBadge(d.risk)}</td>
+    </tr>`).join('');
+  document.getElementById('table-body-2').innerHTML = part2.map(d=>`
+    <tr onclick="openModal(${DATA.indexOf(d)})">
+      <td class="sector-cell" style="color:${SECTOR_COLORS[d.sector]||'#888'}">${d.sector}</td>
+      <td style="font-weight:500">${d.name}</td>
+      <td>${progFill(d.pct)}</td>
+      <td>${phaseBadge(d.phase)}</td>
+      <td>${riskBadge(d.risk)}</td>
+    </tr>`).join('');
+}
 
 let activeRisk = 'All';
 function filterRisk(r, btn) {
