@@ -537,7 +537,7 @@ function tableRowHtml(d, isLast) {
   return `
     <tr style="${rowStyle}" onclick="openModal(${DATA.indexOf(d)})">
       <td class="sector-cell" style="color:${SECTOR_COLORS[d.sector]||'#888'}">${d.sector}</td>
-      <td style="${nameStyle}">${lineSpan}<span onclick="event.stopPropagation();goToProject(${DATA.indexOf(d)})" style="cursor:pointer;text-decoration:underline;text-decoration-color:transparent" onmouseover="this.style.textDecorationColor='currentColor'" onmouseout="this.style.textDecorationColor='transparent'">${d.name}</span></td>
+      <td style="${nameStyle}">${lineSpan}${d.name}</td>
       <td>${progFill(d.pct)}</td>
       <td>${phaseBadge(d.phase)}</td>
       <td>${riskBadge(d.risk)}</td>
@@ -836,32 +836,6 @@ function showSection(id) {
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('sec-'+id).classList.add('active');
   event.target.classList.add('active');
-}
-
-// Navigate from Portfolio table to Projects tab, scroll to and highlight the card
-function goToProject(idx) {
-  const d = DATA[idx];
-  // Switch to Projects tab
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('sec-projects').classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.textContent.trim()==='Projects') t.classList.add('active'); });
-  // Set sector filter to match the project's sector (or All if it's a sub-project not in cards)
-  activeSector = d.sector;
-  document.querySelectorAll('#sector-nav .sector-pill').forEach(p=>{
-    p.classList.toggle('active', p.textContent.trim()===d.sector);
-  });
-  buildCards();
-  // Scroll to the card and highlight it briefly
-  setTimeout(()=>{
-    const card = document.getElementById('proj-card-'+idx);
-    if(card){
-      card.scrollIntoView({behavior:'smooth', block:'center'});
-      card.style.transition = 'box-shadow 0.3s';
-      card.style.boxShadow = '0 0 0 3px var(--green)';
-      setTimeout(()=>{ card.style.boxShadow = ''; }, 1800);
-    }
-  }, 100);
 }
 </script>
 </body>
