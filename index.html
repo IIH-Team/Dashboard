@@ -244,10 +244,10 @@
 <!-- OVERVIEW -->
 <div class="section active" id="sec-overview">
   <div class="kpi-row">
-    <div class="kpi-card"><div class="kpi-label">Total Solutions</div><div class="kpi-value kv-navy">26</div><div class="kpi-sub">Across 5 sectors</div></div>
-    <div class="kpi-card"><div class="kpi-label">BRD Submitted + Completed</div><div class="kpi-value kv-green">17</div><div class="kpi-sub">65% of portfolio</div></div>
-    <div class="kpi-card"><div class="kpi-label">BRD In Progress</div><div class="kpi-value kv-blue">3</div><div class="kpi-sub">Active development</div></div>
-    <div class="kpi-card"><div class="kpi-label">Scoping</div><div class="kpi-value kv-purple">6</div><div class="kpi-sub">Requirements phase</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total Solutions</div><div class="kpi-value kv-navy" id="kpi-total">—</div><div class="kpi-sub">Across 5 sectors</div></div>
+    <div class="kpi-card"><div class="kpi-label">BRD Submitted + Completed</div><div class="kpi-value kv-green" id="kpi-submitted">—</div><div class="kpi-sub" id="kpi-submitted-sub">—</div></div>
+    <div class="kpi-card"><div class="kpi-label">BRD In Progress</div><div class="kpi-value kv-blue" id="kpi-inprogress">—</div><div class="kpi-sub">Active development</div></div>
+    <div class="kpi-card"><div class="kpi-label">Scoping</div><div class="kpi-value kv-purple" id="kpi-scoping">—</div><div class="kpi-sub">Requirements phase</div></div>
     <div class="kpi-card"><div class="kpi-label">Avg Completion</div><div class="kpi-value kv-pink" id="avg-pct">—</div><div class="kpi-sub">Overall portfolio</div></div>
     <div class="risk-stack-card">
       <div class="risk-strip s-green"><span>ON TRACK</span><span class="rs-num" id="risk-ontrack">—</span></div>
@@ -464,6 +464,17 @@ document.getElementById('risk-ontrack').textContent = REAL_DATA.filter(d=>d.risk
 document.getElementById('risk-atrisk').textContent = REAL_DATA.filter(d=>d.risk==='At Risk').length;
 document.getElementById('risk-delayed').textContent = REAL_DATA.filter(d=>d.risk==='Delayed').length;
 
+// Top KPI cards
+const TOTAL_SOLUTIONS = REAL_DATA.length + 1; // +1 for Minister Intelligence Cockpit (umbrella, not counted in phase stats)
+const submittedCount = REAL_DATA.filter(d=>['BRD Submitted','BRD Completed'].includes(d.phase)).length;
+const inProgressCount = REAL_DATA.filter(d=>['BRD In Progress','Requirements Gathering'].includes(d.phase)).length;
+const scopingCount = REAL_DATA.filter(d=>d.phase==='Scoping').length;
+document.getElementById('kpi-total').textContent = TOTAL_SOLUTIONS;
+document.getElementById('kpi-submitted').textContent = submittedCount;
+document.getElementById('kpi-submitted-sub').textContent = Math.round(submittedCount/REAL_DATA.length*100) + '% of portfolio';
+document.getElementById('kpi-inprogress').textContent = inProgressCount;
+document.getElementById('kpi-scoping').textContent = scopingCount;
+
 // CHARTS
 Chart.register(ChartDataLabels);
 window.addEventListener('load', () => {
@@ -488,7 +499,7 @@ window.addEventListener('load', () => {
 
   // Phase donut
   const phases = {"BRD Submitted":0,"BRD Completed":0,"BRD In Progress":0,"Requirements Gathering":0,"Scoping":0};
-  DATA.forEach(d=>{ if(phases[d.phase]!==undefined) phases[d.phase]++; });
+  REAL_DATA.forEach(d=>{ if(phases[d.phase]!==undefined) phases[d.phase]++; });
   new Chart(document.getElementById('phaseChart'), {
     type: 'doughnut',
     data: { labels: Object.keys(phases), datasets:[{ data:Object.values(phases), backgroundColor:['#00845A','#378ADD','#7F77DD','#E88B00','#9B59B6'], borderWidth:2, borderColor:'#fff', hoverOffset:4 }] },
@@ -498,13 +509,12 @@ window.addEventListener('load', () => {
     }, cutout:'58%' }
   });
 
-  // Weekly bar
-  const wData = [88,83,70,50,69]; // sector avg completions
+  // Weekly bar - uses the same live sector averages as the Overview chart
   new Chart(document.getElementById('weeklyChart'), {
     type: 'bar',
     data: {
       labels: ['HEM','Housing','E&C','Municipal','Shared'],
-      datasets:[{ data:wData, backgroundColor:['#00845A','#378ADD','#7F77DD','#E88B00','#C0266A'], borderRadius:4, borderSkipped:false }]
+      datasets:[{ data:sectorAvg, backgroundColor:['#00845A','#378ADD','#7F77DD','#E88B00','#C0266A'], borderRadius:4, borderSkipped:false }]
     },
     options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
       plugins:{legend:{display:false}}, scales:{x:{max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'#E8EEF5'}},y:{ticks:{font:{size:10}},grid:{display:false}}} }
