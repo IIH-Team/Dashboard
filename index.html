@@ -536,19 +536,25 @@
         <div><div class="num" style="color:var(--text3)" id="rep-wc-nochange">—</div><div style="font-size:11px;color:var(--text3)">No Change</div></div>
         <div><div class="num" style="color:var(--navy)" id="rep-wc-at100">—</div><div style="font-size:11px;color:var(--text3)">At 100%</div></div>
       </div>
-      <h3 style="margin-top:14px">Full Comparison</h3>
-      <div class="table-wrap" style="margin-bottom:0">
-        <table>
-          <thead><tr>
-            <th style="width:48%">Solution</th>
-            <th style="width:18%">Last Week</th>
-            <th style="width:18%">This Week</th>
-            <th style="width:16%">Change</th>
-          </tr></thead>
-          <tbody id="rep-wc-table-body"></tbody>
-        </table>
+      <div style="background:var(--bg);border-radius:8px;padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px">Sector Progress This Week</div>
+        <div class="chart-wrap" style="height:160px"><canvas id="rep-weeklyChart"></canvas></div>
       </div>
     </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header"><h3>Full Comparison</h3></div>
+    <table>
+      <thead><tr>
+        <th style="width:13%">Sector</th>
+        <th style="width:43%">Solution</th>
+        <th style="width:14%">Last Week</th>
+        <th style="width:14%">This Week</th>
+        <th style="width:16%">Change</th>
+      </tr></thead>
+      <tbody id="rep-wc-table-body"></tbody>
+    </table>
   </div>
 
   <h2 class="report-h2">SECTOR PROGRESS &amp; RISK ASSESSMENT</h2>
@@ -865,22 +871,8 @@ document.getElementById('rep-wc-improved').textContent = REAL_DATA.filter(d => d
 document.getElementById('rep-wc-nochange').textContent = REAL_DATA.filter(d => d.pct === (d.pctLastWeek ?? d.pct)).length;
 document.getElementById('rep-wc-at100').textContent = REAL_DATA.filter(d => d.pct === 100).length;
 
-// Full Comparison (compact, no sector column, matches email card layout)
-document.getElementById('rep-wc-table-body').innerHTML = REAL_DATA.map(d=>{
-  const last = d.pctLastWeek ?? d.pct;
-  const cur = d.pct;
-  const change = cur - last;
-  let changeHtml;
-  if(change > 0) changeHtml = `<span style="color:var(--green);font-weight:700">▲ +${change}%</span>`;
-  else if(change < 0) changeHtml = `<span style="color:var(--red);font-weight:700">▼ ${change}%</span>`;
-  else changeHtml = `<span style="color:var(--text3)">—</span>`;
-  return `<tr>
-    <td style="font-weight:500">${d.name}</td>
-    <td>${last}%</td>
-    <td>${cur}%</td>
-    <td>${changeHtml}</td>
-  </tr>`;
-}).join('');
+// Full Comparison (identical to Weekly Delta tab - sector, indentation, connector lines)
+document.getElementById('rep-wc-table-body').innerHTML = renderComparisonRows(comparisonRows);
 
 // CHARTS
 Chart.register(ChartDataLabels);
@@ -918,6 +910,17 @@ window.addEventListener('load', () => {
 
   // Weekly bar - uses the same live sector averages as the Overview chart
   new Chart(document.getElementById('weeklyChart'), {
+    type: 'bar',
+    data: {
+      labels: ['HEM','Housing','E&C','Municipal','Shared'],
+      datasets:[{ data:sectorAvg, backgroundColor:['#00845A','#378ADD','#7F77DD','#E88B00','#C0266A'], borderRadius:4, borderSkipped:false }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{legend:{display:false}}, scales:{x:{max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'#E8EEF5'}},y:{ticks:{font:{size:10}},grid:{display:false}}} }
+  });
+
+  // Same chart, duplicated for the Report Email section
+  new Chart(document.getElementById('rep-weeklyChart'), {
     type: 'bar',
     data: {
       labels: ['HEM','Housing','E&C','Municipal','Shared'],
