@@ -460,7 +460,7 @@
 
   <!-- ===== ENGLISH ===== -->
   <p class="lead-line">Dear Team,</p>
-  <p class="lead-line">Please find the updated Executive Progress Report for <span class="editable">[REPORT DATE]</span>.</p>
+  <p class="lead-line">Please find the updated Executive Progress Report for <strong id="rep-en-date"></strong>.</p>
 
   <h2 class="report-h2">EXECUTIVE SUMMARY</h2>
   <ul class="report-ul">
@@ -605,9 +605,9 @@
   <!-- ===== ARABIC ===== -->
   <div dir="rtl" style="text-align:right">
 
-  <h2 class="report-h2" style="text-align:right;border-bottom:2px solid var(--border)">التقرير الأسبوعي — <span class="editable">[التاريخ]</span></h2>
+  <h2 class="report-h2" style="text-align:right;border-bottom:2px solid var(--border)">التقرير الأسبوعي — <strong id="rep-ar-date-1"></strong></h2>
 
-  <p class="lead-line">يرجى الاطلاع على تقرير التقدم التنفيذي المحدّث بتاريخ <span class="editable">[التاريخ]</span>. عنوان هذا الأسبوع: <span class="editable">[...]</span></p>
+  <p class="lead-line">يرجى الاطلاع على تقرير التقدم التنفيذي المحدّث بتاريخ <strong id="rep-ar-date-2"></strong>. عنوان هذا الأسبوع: <span class="editable">[...]</span></p>
 
   <h3 class="report-h3" style="text-align:right">الملخص التنفيذي</h3>
   <ul class="report-ul" style="margin-right:22px;margin-left:0">
@@ -824,6 +824,13 @@ const repToday = new Date();
 const repDateStr = repToday.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
 document.getElementById('rep-banner-date-1').textContent = repDateStr;
 document.getElementById('rep-banner-date-2').textContent = repDateStr;
+
+// Long-form dates for lead lines (EN + AR)
+const repDateLongEN = repToday.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+document.getElementById('rep-en-date').textContent = repDateLongEN;
+const repDateLongAR = repToday.toLocaleDateString('ar-SA', {day:'numeric', month:'long', year:'numeric'});
+document.getElementById('rep-ar-date-1').textContent = repDateLongAR;
+document.getElementById('rep-ar-date-2').textContent = repDateLongAR;
 
 // Executive Summary suggested numbers (EN)
 document.getElementById('rep-en-pct-submitted').textContent = pctSubmitted2;
