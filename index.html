@@ -780,8 +780,10 @@ function renderComparisonRows(rows) {
   }).join('');
 }
 // Display rows = REAL_DATA + Minister Intelligence Cockpit (display-only, dashes, excluded from all stats)
-const ministerCockpit = DATA.find(d=>d.isUmbrella);
-const comparisonRows = [...REAL_DATA, ministerCockpit].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
+// Display all 31 projects (incl. Minister Cockpit umbrella + AI Legal Advisor's 5 sub-projects)
+// with sector shading/connector lines, same as Portfolio tab.
+// NOTE: Improved/No Change/At 100% stats above remain computed from REAL_DATA only.
+const comparisonRows = [...DATA].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
 document.getElementById('wc-full-table-body').innerHTML = renderComparisonRows(comparisonRows);
 // Split for PowerPoint: Part 1 = HEM Office, Part 2 = rest
 const cmpPart1 = comparisonRows.filter(d=>d.sector==='HEM Office');
@@ -1138,7 +1140,7 @@ function buildTimeline(phase, pct) {
     const left = (r.start/TOTAL_MONTHS)*100;
     const width = ((r.end-r.start)/TOTAL_MONTHS)*100;
     const isActive = r.active;
-    html += `<div style="display:grid;grid-template-columns:120px 1fr;align-items:center;margin-bottom:3px">
+    html += `<div style="display:grid;grid-template-columns:90px 1fr;align-items:center;margin-bottom:3px">
       <div style="font-size:8px;font-weight:500;color:var(--text3);padding-right:6px;line-height:1.2">${r.label}</div>
       <div style="position:relative;height:14px;background:#E8EEF5;border-radius:7px;overflow:visible">
         <div style="position:absolute;left:${left}%;width:${width}%;height:100%;background:${r.color};border-radius:7px;opacity:${isActive?1:0.4}"></div>
