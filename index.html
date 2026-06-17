@@ -446,7 +446,19 @@
 
 <!-- REPORT EMAIL -->
 <div class="section" id="sec-report">
-  <div class="report-wrap">
+  <div class="report-wrap" id="report-wrap" style="position:relative">
+
+  <div id="report-lock" style="position:absolute;inset:0;z-index:50">
+    <div style="position:absolute;inset:0;backdrop-filter:blur(10px);background:rgba(11,15,26,0.92);border-radius:10px"></div>
+    <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:12px;padding:32px 36px;width:300px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3)">
+      <div style="font-size:28px;margin-bottom:10px">🔒</div>
+      <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px">Report Email — Restricted</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:16px">Enter password to view this section</div>
+      <input type="password" id="report-pw-input" placeholder="Password" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;margin-bottom:10px" onkeydown="if(event.key==='Enter')unlockReport()">
+      <button onclick="unlockReport()" style="width:100%;padding:9px;background:var(--navy);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">Unlock</button>
+      <div id="report-pw-error" style="display:none;color:var(--red);font-size:11px;margin-top:8px">Incorrect password</div>
+    </div>
+  </div>
 
   <!-- ===== ENGLISH ===== -->
   <p class="lead-line">Dear Team,</p>
@@ -455,7 +467,7 @@
   <h2 class="report-h2">EXECUTIVE SUMMARY</h2>
   <ul class="report-ul">
     <li>As of today, <strong id="rep-en-pct-submitted" style="color:var(--green)"></strong>% of BRDs are completed or signed off (<strong id="rep-en-submitted-count" style="color:var(--green)"></strong> of <strong id="rep-en-total" style="color:var(--green)"></strong>) with <strong id="rep-en-ontrack" style="color:var(--green)"></strong> initiatives on track.</li>
-    <li class="editable">[This week's headline: ...]</li>
+    <li id="enc-headline_en" class="editable"></li>
     <li>Risk profile: <strong id="rep-en-risk-summary"></strong> (see Sector Progress &amp; Risk Assessment below for details).</li>
   </ul>
 
@@ -579,14 +591,14 @@
 
   <h2 class="report-h2">Final Comments</h2>
   <ul class="report-ul">
-    <li class="editable"><u>Execution Outlook:</u> [...]</li>
-    <li class="editable"><u>Risk &amp; Accountability:</u> [...]</li>
+    <li class="editable"><u>Execution Outlook:</u> <span id="enc-comment_outlook_en"></span></li>
+    <li class="editable"><u>Risk &amp; Accountability:</u> <span id="enc-comment_risk_en"></span></li>
   </ul>
   <p class="editable" style="margin:6px 0 4px"><u>Next Week Targets:</u></p>
   <ul class="report-ul">
-    <li class="editable">[Target 1]</li>
-    <li class="editable">[Target 2]</li>
-    <li class="editable">[Target 3]</li>
+    <li class="editable" id="enc-target1_en"></li>
+    <li class="editable" id="enc-target2_en"></li>
+    <li class="editable" id="enc-target3_en"></li>
   </ul>
 
   <p class="lead-line" style="margin-top:14px">Please feel free to reach out should you have any questions or require further details. We would be happy to walk you through the update at your convenience.</p>
@@ -598,12 +610,12 @@
 
   <h2 class="report-h2" style="text-align:right;border-bottom:2px solid var(--border)">التقرير الأسبوعي — <strong id="rep-ar-date-1"></strong></h2>
 
-  <p class="lead-line">يرجى الاطلاع على تقرير التقدم التنفيذي المحدّث بتاريخ <strong id="rep-ar-date-2"></strong>. عنوان هذا الأسبوع: <span class="editable">[...]</span></p>
+  <p class="lead-line">يرجى الاطلاع على تقرير التقدم التنفيذي المحدّث بتاريخ <strong id="rep-ar-date-2"></strong>. عنوان هذا الأسبوع: <span class="editable" id="enc-headline_ar"></span></p>
 
   <h3 class="report-h3" style="text-align:right">الملخص التنفيذي</h3>
   <ul class="report-ul" style="margin-right:22px;margin-left:0">
     <li>تواصل محفظة حلول الذكاء الاصطناعي مسيرتها؛ حتى تاريخه، تم إنجاز أو اعتماد <strong id="rep-ar-pct-submitted" style="color:var(--green)"></strong>% من وثائق متطلبات الأعمال (<strong id="rep-ar-submitted-count" style="color:var(--green)"></strong> من أصل <strong id="rep-ar-total" style="color:var(--green)"></strong>)، مع <strong id="rep-ar-ontrack" style="color:var(--green)"></strong> مبادرة تسير وفق الخطة.</li>
-    <li class="editable">[أبرز التقدمات هذا الأسبوع: ...]</li>
+    <li class="editable" id="enc-highlight_ar"></li>
     <li>ملف المخاطر: <strong id="rep-ar-risk-summary"></strong> (التفاصيل أدناه ضمن تقييم التقدم والمخاطر حسب القطاع).</li>
   </ul>
 
@@ -636,13 +648,13 @@
 
   <h3 class="report-h3" style="text-align:right">الملاحظات الختامية</h3>
   <ul class="report-ul" style="margin-right:22px;margin-left:0">
-    <li class="editable">[...]</li>
+    <li class="editable" id="enc-comment_ar"></li>
   </ul>
 
   <h3 class="report-h3" style="text-align:right">أهداف الأسبوع القادم</h3>
   <ul class="report-ul" style="margin-right:22px;margin-left:0">
-    <li class="editable">[...]</li>
-    <li class="editable">[...]</li>
+    <li class="editable" id="enc-target1_ar"></li>
+    <li class="editable" id="enc-target2_ar"></li>
   </ul>
 
   <p class="lead-line">لا تترددوا في التواصل معنا في حال وجود أي استفسارات أو الحاجة إلى مزيد من التفاصيل. ويسعدنا استعراض التحديث معكم في الوقت الذي يناسبكم.</p>
@@ -882,7 +894,61 @@ document.getElementById('rep-ar-ontrack').textContent = onTrackCount2;
 let repRiskPartsAr = [];
 if(atRiskCount2) repRiskPartsAr.push(`<b style="color:var(--amber)">${atRiskCount2} مبادرة في خطر</b>`);
 if(delayedCount2) repRiskPartsAr.push(`<b style="color:var(--red)">${delayedCount2} مبادرة متأخرة</b>`);
-document.getElementById('rep-ar-risk-summary').innerHTML = repRiskPartsAr.length ? repRiskPartsAr.join('، ') : 'لا توجد مخاطر نشطة';
+// ===== Report Email — قفل بكلمة مرور + تشفير حقيقي للمحتوى السردي =====
+// المحتوى السردي (headline/Final Comments/Next Week Targets) مشفّر فعلياً بـAES-GCM (مفتاح من PBKDF2)
+// ولا يظهر بكود الصفحة كنص واضح أبداً. أرقام الـKPI/الجدول بهذا التاب نفسها موجودة بتابات
+// Portfolio/Projects/Weekly Delta المفتوحة للجميع أصلاً، فهي مغطّاة بصرياً بالقفل بس مش مشفّرة بشكل منفصل.
+const ENCRYPTED_REPORT = {
+  "headline_en": {"salt":"j8DdnNffErQJMe4dhYoP0A==","iv":"1tg/V8VgsVnLjPYo","data":"EBM1O17FVE+y3KGhdlw9ix8oZyHkE3QjvqqaAjmAyn9sTpXXS1qw+7Mopw=="},
+  "comment_outlook_en": {"salt":"09dcSkUuv3w4s5zIyPQxrQ==","iv":"cTPBEy82Dyk/a7w8","data":"WwzP8vzFsOWVxnIFwYnGQQPXQ4En"},
+  "comment_risk_en": {"salt":"iAMHStZcE9obp2BlF3QuRA==","iv":"2V7ED8LN8+eYXbo9","data":"8Q9rBm33VA1PEJtthQaktPXsVWFI"},
+  "target1_en": {"salt":"C65HIKNbsOtfX/uc3OAA3Q==","iv":"bFN2F4kKfFgujGcS","data":"qhn0ZQrRBi1LViQK/CH7KSUTf0oRgFHA/Og="},
+  "target2_en": {"salt":"gfzLhTsN8g4nPjV0AhmRIA==","iv":"ClHE4KAw+TwISUbX","data":"AxIgf9bqvuBW+WI0JZhYMlc/l4fhFOJlzr8="},
+  "target3_en": {"salt":"cpPkbiSPcdkut1nIO6/fOA==","iv":"RWjjl/xN40oWoVAW","data":"RbcmK2z+Ebbe8cmnkP72YlLP+wXFLPLQRbY="},
+  "headline_ar": {"salt":"wmjwH7ruObvhIE2fARWAkA==","iv":"sBg/WVjbA/U7JV2t","data":"YF3D4DgOGUiFBeK312KKJI+q657o"},
+  "highlight_ar": {"salt":"2ltNpS3ACPeuTdWqcSiC+w==","iv":"D2np3jxkbn+Zfd9j","data":"7RMzCq0o8FiI1ucrzaRhn4S8rNwbZiLv2rVN9P1tLhMVcZZlCmPD+6nVd2+7fOpss1MibkIy0M/UxEnY1fuHp6Dkbk522Q=="},
+  "comment_ar": {"salt":"IOwzs83AfVeYBRBPOnvxIg==","iv":"t3yCOJafDmHlWPTN","data":"EEAiA/OeO/ugoD8z1rZJW9NvQmKy"},
+  "target1_ar": {"salt":"a9dzF5CcwsdvnmYig+AD4Q==","iv":"v49NpS3ZF5Ud6P5V","data":"Jn98TgDZSoZSBZP89kfrhk/Qu3/E"},
+  "target2_ar": {"salt":"S2N40HY5RorW249xrbXD4Q==","iv":"+iFVjkDsBM6hX22B","data":"/OH0HQdG4ni2u24B60B4qc1NYDRL"}
+};
+
+function b64ToBytes(b64) { return Uint8Array.from(atob(b64), c => c.charCodeAt(0)); }
+
+async function deriveReportKey(passphrase, salt) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
+  );
+}
+
+async function decryptReportField(passphrase, payload) {
+  const salt = b64ToBytes(payload.salt), iv = b64ToBytes(payload.iv), data = b64ToBytes(payload.data);
+  const key = await deriveReportKey(passphrase, salt);
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+  return new TextDecoder().decode(decrypted);
+}
+
+async function unlockReport() {
+  const pw = document.getElementById('report-pw-input').value;
+  const errEl = document.getElementById('report-pw-error');
+  try {
+    const decryptedValues = {};
+    for (const [fieldKey, payload] of Object.entries(ENCRYPTED_REPORT)) {
+      decryptedValues[fieldKey] = await decryptReportField(pw, payload);
+    }
+    // كل الحقول فُكّت بنجاح -> الباسورد صحيح
+    for (const [fieldKey, text] of Object.entries(decryptedValues)) {
+      const el = document.getElementById('enc-' + fieldKey);
+      if (el) el.textContent = text;
+    }
+    document.getElementById('report-lock').style.display = 'none';
+    errEl.style.display = 'none';
+  } catch (e) {
+    errEl.style.display = 'block';
+  }
+}
 
 // Portfolio table (full, with Minister Cockpit umbrella row shown)
 const repSortedRows = [...DATA].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
