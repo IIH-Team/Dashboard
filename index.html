@@ -98,6 +98,7 @@
   .table-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); }
   .table-header h3 { font-size: 14px; font-weight: 700; color: var(--navy); }
   .filter-row { display: flex; gap: 8px; align-items: center; }
+  .filter-label { font-size: 11px; font-weight: 600; color: var(--text3); width: 70px; flex-shrink: 0; white-space: nowrap; }
   .filter-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: #fff; font-size: 12px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
   .filter-btn:hover, .filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
   .search-input { padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; outline: none; width: 180px; }
@@ -301,13 +302,20 @@
   <div class="table-wrap">
     <div class="table-header">
       <h3>All 26 AI Solutions</h3>
-      <div class="filter-row">
-        <input class="search-input" type="text" placeholder="Search..." oninput="filterTable(this.value)" id="table-search">
-        <button class="filter-btn active" onclick="filterRisk('All',this)">All</button>
-        <button class="filter-btn" onclick="filterRisk('On Track',this)">On Track</button>
-        <button class="filter-btn" onclick="filterRisk('At Risk',this)">At Risk</button>
-        <button class="filter-btn" onclick="filterRisk('Delayed',this)">Delayed</button>
-      </div>
+      <input class="search-input" type="text" placeholder="Search..." oninput="filterTable(this.value)" id="table-search">
+    </div>
+    <div class="filter-row" id="portfolio-risk-row" style="padding:10px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+      <span class="filter-label">By Risk:</span>
+      <button class="filter-btn active" onclick="filterRisk('All',this)">All</button>
+      <button class="filter-btn" onclick="filterRisk('On Track',this)">On Track</button>
+      <button class="filter-btn" onclick="filterRisk('At Risk',this)">At Risk</button>
+      <button class="filter-btn" onclick="filterRisk('Delayed',this)">Delayed</button>
+    </div>
+    <div class="filter-row" id="portfolio-sector-row" style="padding:10px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+      <span class="filter-label">By Sector:</span>
+    </div>
+    <div class="filter-row" id="portfolio-phase-row" style="padding:10px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+      <span class="filter-label">By Phase:</span>
     </div>
     <table id="main-table">
       <thead>
@@ -370,6 +378,8 @@
 <!-- PROJECTS 2 (with timeline) -->
 <div class="section" id="sec-projects2">
   <div class="sector-nav" id="sector-nav2"></div>
+  <div class="sector-nav" id="phase-nav2"></div>
+  <div class="sector-nav" id="risk-nav2"></div>
   <div class="projects-grid" id="projects-grid2"></div>
 </div>
 
@@ -1087,10 +1097,12 @@ function renderRows(rows) {
     return tableRowHtml(d, isLastSub);
   }).join('');
 }
-function buildTable(filter='All', search='') {
+function buildTable(filter='All', search='', sector='All', phase='All') {
   const tbody = document.getElementById('table-body');
   let rows = [...DATA].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
   if(filter!=='All') rows = rows.filter(d=>d.risk===filter || d.isUmbrella);
+  if(sector!=='All') rows = rows.filter(d=>d.sector===sector);
+  if(phase!=='All') rows = rows.filter(d=>d.phase===phase);
   if(search) rows = rows.filter(d=>d.name.toLowerCase().includes(search.toLowerCase())||d.sector.toLowerCase().includes(search.toLowerCase()));
   tbody.innerHTML = renderRows(rows);
 }
@@ -1107,20 +1119,47 @@ function buildSplitTables() {
 }
 
 let activeRisk = 'All';
+let activeSector3 = 'All';
+let activePhase = 'All';
+const PHASES = ["All", "Scoping", "Requirements Gathering", "BRD In Progress", "BRD Submitted", "BRD Completed"];
+
 function filterRisk(r, btn) {
   activeRisk = r;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#portfolio-risk-row .filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  buildTable(r, document.getElementById('table-search').value);
+  buildTable(activeRisk, document.getElementById('table-search').value, activeSector3, activePhase);
 }
-function filterTable(v) { buildTable(activeRisk, v); }
+function filterTable(v) { buildTable(activeRisk, v, activeSector3, activePhase); }
+
+function filterSector3(s, btn) {
+  activeSector3 = s;
+  document.querySelectorAll('#portfolio-sector-row .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildTable(activeRisk, document.getElementById('table-search').value, activeSector3, activePhase);
+}
+function filterPhase(p, btn) {
+  activePhase = p;
+  document.querySelectorAll('#portfolio-phase-row .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildTable(activeRisk, document.getElementById('table-search').value, activeSector3, activePhase);
+}
+function buildPortfolioFilterRows() {
+  const sectorHtml = SECTORS.map(s=>`<button class="filter-btn${s==='All'?' active':''}" onclick="filterSector3('${s}',this)">${s}</button>`).join('');
+  document.getElementById('portfolio-sector-row').insertAdjacentHTML('beforeend', sectorHtml);
+  const phaseHtml = PHASES.map(p=>`<button class="filter-btn${p==='All'?' active':''}" onclick="filterPhase('${p}',this)">${p}</button>`).join('');
+  document.getElementById('portfolio-phase-row').insertAdjacentHTML('beforeend', phaseHtml);
+}
+buildPortfolioFilterRows();
 
 // SECTOR NAV + CARDS
 let activeSector = 'All';
 function buildSectorNav() {
   const html = SECTORS.map(s=>`<div class="sector-pill${s==='All'?' active':''}" onclick="setSector('${s}',this)">${s}</div>`).join('');
   document.getElementById('sector-nav').innerHTML = html;
-  document.getElementById('sector-nav2').innerHTML = SECTORS.map(s=>`<div class="sector-pill${s==='All'?' active':''}" onclick="setSector2('${s}',this)">${s}</div>`).join('');
+  const labelSpan = (t) => `<span class="filter-label" style="align-self:center">${t}</span>`;
+  document.getElementById('sector-nav2').innerHTML = labelSpan('Sector:') + SECTORS.map(s=>`<div class="sector-pill${s==='All'?' active':''}" onclick="setSector2('${s}',this)">${s}</div>`).join('');
+  document.getElementById('phase-nav2').innerHTML = labelSpan('Phase:') + PHASES.map(p=>`<div class="sector-pill${p==='All'?' active':''}" onclick="setPhase2('${p}',this)">${p}</div>`).join('');
+  document.getElementById('risk-nav2').innerHTML = labelSpan('Risk:') + RISKS.map(r=>`<div class="sector-pill${r==='All'?' active':''}" onclick="setRisk2('${r}',this)">${r}</div>`).join('');
 }
 function setSector(s, el) {
   activeSector = s;
@@ -1129,9 +1168,24 @@ function setSector(s, el) {
   buildCards();
 }
 let activeSector2 = 'All';
+let activePhase2 = 'All';
+let activeRisk2 = 'All';
+const RISKS = ["All", "On Track", "At Risk", "Delayed"];
 function setSector2(s, el) {
   activeSector2 = s;
   document.querySelectorAll('#sector-nav2 .sector-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  buildCards2();
+}
+function setPhase2(p, el) {
+  activePhase2 = p;
+  document.querySelectorAll('#phase-nav2 .sector-pill').forEach(pl=>pl.classList.remove('active'));
+  el.classList.add('active');
+  buildCards2();
+}
+function setRisk2(r, el) {
+  activeRisk2 = r;
+  document.querySelectorAll('#risk-nav2 .sector-pill').forEach(pl=>pl.classList.remove('active'));
   el.classList.add('active');
   buildCards2();
 }
@@ -1175,7 +1229,9 @@ function buildCards() {
   document.getElementById('projects-grid').innerHTML = items.map(d=>buildCardHtml(d, false)).join('');
 }
 function buildCards2() {
-  const rawItems = (activeSector2==='All' ? DATA : DATA.filter(d=>d.sector===activeSector2)).filter(d=>!d.isUmbrella);
+  let rawItems = (activeSector2==='All' ? DATA : DATA.filter(d=>d.sector===activeSector2)).filter(d=>!d.isUmbrella);
+  if (activePhase2 !== 'All') rawItems = rawItems.filter(d=>d.phase===activePhase2);
+  if (activeRisk2 !== 'All') rawItems = rawItems.filter(d=>d.risk===activeRisk2);
   const items = [...rawItems].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
   document.getElementById('projects-grid2').innerHTML = items.map(d=>buildCardHtml(d, true)).join('');
 }
