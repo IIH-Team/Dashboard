@@ -46,6 +46,15 @@
   .nav-tab:hover { color: var(--navy); }
   .nav-tab.active { color: var(--navy); font-weight: 700; border-bottom-color: var(--green); }
   .nav-sep { padding: 12px 4px; font-size: 14px; color: var(--border); user-select: none; }
+  .nav-spacer { flex: 1; }
+  .nav-tab.pm { color: #7b46f0; }
+  .nav-tab.pm:hover { color: #5a2fd4; }
+  .nav-tab.pm.active { color: #5a2fd4; border-bottom-color: #7b46f0; }
+  .nav-label { padding: 12px 8px 12px 14px; font-size: 10px; font-weight: 700; color: #aaa; letter-spacing: .06em; text-transform: uppercase; user-select: none; border-left: 1px solid var(--border); margin-left: 4px; }
+  .pivot-btn.active { background: #7b46f0 !important; color: #fff !important; border-color: #7b46f0 !important; }
+  .lead-copy-btn { opacity: 0; transition: opacity .15s; }
+  .lead-color-head:hover .lead-copy-btn { opacity: 1; }
+  .lead-copy-btn:hover { background: rgba(255,255,255,.35) !important; }
 
   /* MAIN */
   .main { padding: 24px 28px; max-width: 1400px; margin: 0 auto; }
@@ -261,6 +270,11 @@
   <div class="nav-tab" onclick="showSection('risks')">Risk</div>
   <div class="nav-sep">|</div>
   <div class="nav-tab" onclick="showSection('report')">Report Email</div>
+  <div class="nav-spacer"></div>
+  <div class="nav-label">PM View</div>
+  <div class="nav-tab pm" onclick="showSection('teamlens')">👥 Team Lens</div>
+  <div class="nav-tab pm" onclick="showSection('pivot')">📊 Pivot</div>
+  <div class="nav-tab pm" onclick="showSection('alerts')">⚠️ Alerts</div>
 </div>
 
 <div class="main">
@@ -693,39 +707,78 @@
 
 <footer>Ideal Innovation House &nbsp;|&nbsp; Empowering Innovation, Enriching Lives &nbsp;|&nbsp; iih.ai &nbsp;|&nbsp; MOMAH AI Solutions — Jun 2026</footer>
 
+<!-- ══ PM: TEAM LENS ══════════════════════════════════════════════════════ -->
+<div class="section" id="sec-teamlens">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <div>
+      <div style="font-size:18px;font-weight:700;color:#1e293b">👥 Team Lens</div>
+      <div style="font-size:13px;color:#64748b;margin-top:2px">Per-member workload, progress & risk — internal view</div>
+    </div>
+  </div>
+  <div id="pm-teamlens-body" style="display:block"></div>
+</div>
+
+<!-- ══ PM: PIVOT ══════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-pivot">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:18px;font-weight:700;color:#1e293b">📊 Pivot Table</div>
+      <div style="font-size:13px;color:#64748b;margin-top:2px">Group and sort by any dimension — click column headers to sort</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="pivot-btn active" onclick="setPivotGroup('lead')" style="padding:6px 14px;border:1px solid #e2e8f0;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#334155">By Lead</button>
+      <button class="pivot-btn" onclick="setPivotGroup('sector')" style="padding:6px 14px;border:1px solid #e2e8f0;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#334155">By Sector</button>
+      <button class="pivot-btn" onclick="setPivotGroup('phase')" style="padding:6px 14px;border:1px solid #e2e8f0;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#334155">By Phase</button>
+      <button class="pivot-btn" onclick="setPivotGroup('risk')" style="padding:6px 14px;border:1px solid #e2e8f0;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#334155">By Risk</button>
+    </div>
+  </div>
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:auto;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+    <div id="pm-pivot-body"></div>
+  </div>
+</div>
+
+<!-- ══ PM: ALERTS ═════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-alerts">
+  <div style="margin-bottom:20px">
+    <div style="font-size:18px;font-weight:700;color:#1e293b">⚠️ Alerts</div>
+    <div style="font-size:13px;color:#64748b;margin-top:2px">Solutions that need your attention — updated from live data</div>
+  </div>
+  <div id="pm-alerts-body"></div>
+</div>
+
 <script>
 const DATA = [
-{"sector": "HEM Office", "name": "Minister Intelligence Cockpit", "lead": "", "pct": 0, "task": "—", "phase": "—", "risk": "On Track", "notes": "", "past": "", "next": "", "owner": "", "champion": "", "desc": "", "risks": "", "support": "", "isUmbrella": true, "pctLastWeek": 0, "brdStart": null, "brdSubmittedTarget": null, "designStart": null, "bcgDesignTarget": null, "buildStart": null, "buildEnd": null},
-{"name": "Dynamic Subsidy Allocation & Optimization Tool", "sector": "Housing", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Enhanced BRD with new use cases, process flows, and Central Bank data source.\n* Aligned requirements and finalized the scope.\n* BRD signed off.", "next": "* Handed off to BD.\n* Design phase.", "owner": "نايف الصقعبي", "champion": "مشاري الكريديس", "desc": "An integrated residential intelligence center used by analysts in the Housing Support Agency to make housing support decisions for beneficiary segments accurately and efficiently, and it supports the visions and decisions of His Excellency the Minister.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-10", "brdSubmittedTarget": "2026-05-10", "designStart": "2026-05-11", "bcgDesignTarget": "2026-06-15", "buildStart": "2026-06-16", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Smart Housing Co-pilot", "sector": "Housing", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Refined and updated use cases, added new use cases, dedicated data sections, process flow diagrams, and a new data source.", "next": "* Handed off to BD.\n* Design phase.", "owner": "نايف الرشيدي", "champion": "مشاري الكريديس", "desc": "The Smart Housing Co-Pilot is the core AI engine for the Real Estate and Housing Command Center in Saudi Arabia. The platform integrates supply, demand, financing, and regulatory data from more than eight government entities in real time.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-03-01", "brdSubmittedTarget": "2026-04-05", "designStart": "2026-04-06", "bcgDesignTarget": "2026-05-15", "buildStart": "2026-05-16", "buildEnd": "2026-11-16", "ktStart": "2026-11-17", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Policy AI Lab", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "د. أحمد الدرويش", "champion": "حمد الشريدة", "desc": "A Comprehensive Generative Center for the Policy Lifecycle: a Unified Registry, Automated Updates, Impact Simulation, and Policy Brief Drafting.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-01", "brdSubmittedTarget": "2026-05-05", "designStart": "2026-05-06", "bcgDesignTarget": "2026-06-15", "buildStart": "2026-06-16", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-25", "tlWindowStart": "2026-01-01"},
-{"name": "Media Appearance v1.0", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "رحاب بن سعيد", "champion": "حمد الشريدة", "desc": "A Unified Platform for Media Monitoring, Analysis, Authoring, and Planning.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-01-15", "brdSubmittedTarget": "2026-03-31", "designStart": "2026-04-01", "bcgDesignTarget": "2026-08-31", "buildStart": "2026-09-01", "buildEnd": "2026-11-20", "ktStart": "2026-11-21", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Digital Human & Citizens Insights Hub", "sector": "Shared Services", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "عبير", "champion": "وليد العسكر", "desc": "An integrated system that focuses on unifying communication channels and enhancing the quality of services and responses provided to customers through artificial intelligence and virtual visits.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-05", "designStart": "2026-06-06", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2027-02-28", "ktStart": "2027-03-01", "ktEnd": "2027-03-31", "tlWindowStart": "2026-04-01"},
-{"name": "Internal Audit Genius", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "محمد السعيد", "champion": "حمد الشريدة", "desc": "Intelligent Research, Auditing, and Risk Tools to Automate Due Diligence, Reporting, and Proactive Alerts.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-17", "brdSubmittedTarget": "2026-05-17", "designStart": "2026-05-18", "bcgDesignTarget": "2026-06-30", "buildStart": "2026-07-01", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-16", "tlWindowStart": "2026-01-01"},
-{"name": "Sentiment Pulse AI", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "مصطفى الزعتري", "champion": "حمد الشريدة", "desc": "A Real-Time Sentiment Intelligence Platform with Crisis Predictions and Bilingual Reports.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-04", "designStart": "2026-06-05", "bcgDesignTarget": "2026-07-05", "buildStart": "2026-07-06", "buildEnd": "2026-11-01", "ktStart": "2026-11-02", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
-{"name": "Advancing IC with AI", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "قصي الفواز", "champion": "حمد الشريدة", "desc": "A Platform for Agreements, Organizations, and International Visits Services, with Alerting Agents and Intelligent Reports.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-21", "brdSubmittedTarget": "2026-05-21", "designStart": "2026-05-22", "bcgDesignTarget": "2026-06-30", "buildStart": "2026-07-01", "buildEnd": "2026-11-05", "ktStart": "2026-11-06", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
-{"name": "Directives Co-pilot", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "عبدالله السيف", "champion": "حمد الشريدة", "desc": "A smart system for tracking directives, monitoring their status and progress, and using AI to recommend the most suitable assignee for each directive.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-04", "designStart": "2026-06-05", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
-{"name": "Smart Scheduling", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "د هديل الزهراني", "champion": "حمد الشريدة", "desc": "Managing Requests and Scheduling of His Excellency the Minister's Meetings, with Priority Assessment, Conflict and Risk Evaluation, and Adaptive Scheduling.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-01", "brdSubmittedTarget": "2026-06-05", "designStart": "2026-06-06", "bcgDesignTarget": "2026-07-16", "buildStart": "2026-07-16", "buildEnd": "2026-11-05", "ktStart": "2026-11-06", "ktEnd": "2026-12-15", "tlWindowStart": "2026-01-01"},
-{"name": "Board and Committees", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off.", "next": "* Design phase.", "owner": "طلال القحطاني", "champion": "حمد الشريدة", "desc": "Smart Onboarding for Council Members, Featuring Periodic Briefings, Instant Governance Q&A, and an Institutional Decision History.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-03", "brdSubmittedTarget": "2026-05-03", "designStart": "2026-05-04", "bcgDesignTarget": "2026-05-25", "buildStart": "2026-05-26", "buildEnd": "2026-11-05", "ktStart": "2026-11-06", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
-{"name": "Requirements and Checklist Generator", "sector": "E&C", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off by Solutions Owner.\n* BRD handed off to ByteDance.\n* HLSD conversations kicked off.", "next": "* Design phase.", "owner": "سعيد القحطاني", "champion": "Sarah AlGhamdi", "desc": "An AI driven requirements and checklist generator for regulations, licensing and appeals analysis.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-20", "brdSubmittedTarget": "2026-05-25", "designStart": "2026-05-26", "bcgDesignTarget": "2026-06-10", "buildStart": "2026-06-11", "buildEnd": "2026-10-31", "ktStart": "2026-11-01", "ktEnd": "2026-12-10", "tlWindowStart": "2026-01-01"},
-{"name": "Demand & Supply Optimizer", "sector": "Housing", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Updated BRD: incorporated feedback, enhanced data sections, added missing fields/screens, and improved structure.\n* BRD signed off.", "next": "* Translation and handoff to BD.\n* Design phase.", "owner": "نايف الصقعبي", "champion": "مشاري الكريديس", "desc": "An agentic AI platform consisting of one structured agent and four analytical engines. The structured agent provides a chat interface in Arabic or English, automatically identifies the appropriate query form, and generates a shareable PDF report without human intervention.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-04", "brdSubmittedTarget": "2026-06-03", "designStart": "2026-06-04", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2026-10-31", "ktStart": "2026-11-01", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Urban Planning Companion", "sector": "Municipal Affairs", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off.", "next": "* Design phase.", "owner": "حاتم الخثلان", "champion": "محمد الدوسري", "desc": "AI co-pilot for diagnosing urban needs, optimizing zoning, and simulating impacts.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-18", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-31", "buildStart": "2026-08-01", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Intelligent Invoice Management", "sector": "Shared Services", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* Completed scoping and BRD drafting.\n* Conducted requirements meeting with Business Owner.", "next": "* Share BRD with Business Owner and ByteDance for review.\n* Schedule BRD review meeting with Business Owner.", "owner": "عبدالعزيز العجلان", "champion": "وليد العسكر", "desc": "A unified AI platform that ingests and categorizes bill data from Tahsel, Makeen, Efa'a, and Sanad into a centralized dashboard for real-time visibility and management.", "risks": "", "support": "", "pctLastWeek": 60, "brdStart": "2026-05-18", "brdSubmittedTarget": "2026-06-20", "designStart": "2026-06-21", "bcgDesignTarget": "2026-07-22", "buildStart": "2026-07-23", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Meeting Genius v2.0", "sector": "HEM Office", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* Updated BRD submitted to Solution Owner.", "next": "* Awaiting Sign off.", "owner": "عبدالله السيف", "champion": "حمد الشريدة", "desc": "Transforming Meetings into Actionable Decisions Through Executive Summaries, Directive Extraction, and Execution Tracking.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-04", "designStart": "2026-06-05", "bcgDesignTarget": "2026-07-04", "buildStart": "2026-07-05", "buildEnd": "2026-11-30", "ktStart": "2026-12-01", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Financial & Budgeting Co-pilot", "sector": "Shared Services", "pct": 95, "phase": "BRD Completed", "risk": "On Track", "past": "* Sent updated BRD to Business Owner for approval.\n* Awaiting BRD final sign-off.\n* Conducted demo presentation meetings.", "next": "* BRD approved.\n* Coordinating with ByteDance and Business Owner on HLSD requirements.\n* Conducting prototype sessions with ByteDance and Business Owner.", "owner": "علي الكديسي", "champion": "وليد العسكر", "desc": "An AI system for financial analysis and budget forecasting linked to all MOMAH Amana systems.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-04-24", "brdSubmittedTarget": "2026-05-24", "designStart": "2026-05-25", "bcgDesignTarget": "2026-06-24", "buildStart": "2026-06-25", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
-{"name": "Sales Agent Stimulator", "sector": "Housing", "pct": 30, "phase": "Scoping", "risk": "On Track", "past": "* Met with Business Owner, ByteDance, and BCG; agreed to propose new scope within two weeks.\n* Met with AI Champion to identify overall strategy direction.", "next": "* Preparing initial scope based on current solution, solution card, and business requirements.\n* Reviewing scope document with AI Champion, Business Owner, and key stakeholders.", "owner": "الشركة الوطنية للاسكان", "champion": "مشاري الكريديس", "desc": "The \"Smart Digital Sales Agent Stimulator\" is an AI-powered, automated platform designed to stimulate and enhance the performance of real estate sales operations at NHC.", "risks": "", "support": "", "pctLastWeek": 30, "brdStart": "2026-05-31", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-08-03", "buildStart": "2026-08-04", "buildEnd": "2027-01-16", "ktStart": "2027-01-17", "ktEnd": "2027-02-28", "tlWindowStart": "2026-04-01"},
-{"name": "Roads Maintenance AI", "sector": "Municipal Affairs", "pct": 90, "phase": "BRD Completed", "risk": "Delayed", "past": "* Conducted data meeting with ByteDance and Business Owner.\n* Sent BRD draft to Business Owner for review.\n* Received Business Owner's BRD feedback.", "next": "* Incorporating Business Owner feedback into BRD.\n* Awaiting BRD sign-off.\n* Initiating HLSD sessions with ByteDance and Business Owner.\n* Continuing data meetings with ByteDance and Business Owner.", "owner": "د. إبراهيم عبدالله", "champion": "محمد الدوسري", "desc": "An AI system for Road Maintenance.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-31", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-08-25", "buildStart": "2026-08-26", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Intelligent Investor Center", "sector": "Municipal Affairs", "pct": 75, "phase": "BRD In Progress", "risk": "At Risk", "past": "* Scope and BRD drafting initiated.", "next": "* Share BRD with Business Owner and ByteDance for review.\n* Schedule BRD review meeting with Business Owner.", "owner": "محمد الدوسري", "champion": "اروى المفيز", "desc": "An integrated suite of AI solutions within FURAS that supports the full investment lifecycle—from engagement to decision-making. It enhances efficiency, transparency, and data-driven insights while maintaining governance and human oversight.", "risks": "HLSD in progress prior to BRD approval", "support": "", "pctLastWeek": 65, "brdStart": "2026-04-17", "brdSubmittedTarget": "2026-05-17", "designStart": "2026-05-18", "bcgDesignTarget": "2026-06-16", "buildStart": "2026-06-17", "buildEnd": "2026-11-16", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Intelligent Violations Detector", "sector": "E&C", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off.", "next": "* Provide feedback on ByteDance team's comments.", "owner": "خالد مساعد الجبير", "champion": "سارة الغامدي", "desc": "An AI-powered platform that automatically detects and flags violations, streamlining enforcement and compliance workflows.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-01", "brdSubmittedTarget": "2026-06-05", "designStart": "2026-06-06", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "AI Legal Advisor v2.0", "sector": "HEM Office", "pct": 65, "phase": "BRD In Progress", "risk": "On Track", "past": "* Completed Expert Committee BRD.\n* Completed draft scoping document (AI Legal Advisor).\n* Completed data gathering meetings with Business Owner (Systems and Regulations).", "next": "* Review and address Business Owner comments on Expert Committee BRD.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "A Unified Legal Reference with Drafts and Legal Formulations, Benchmarking Comparisons, and Case Outcome Predictions.", "risks": "", "support": "", "pctLastWeek": 65, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Qualification and Procurement Genius", "sector": "Shared Services", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* Conducted requirements gathering sessions for BRD.\n* Submitted draft BRD to Business Owner for review.\n* Awaiting Business Owner feedback.", "next": "* Awaiting BRD final sign-off.\n* Coordinating with ByteDance and Business Owner on HLSD requirements.", "owner": "محمد الماجد", "champion": "وليد العسكر", "desc": "End-to-end provider qualification and procurement optimization, incl. RFP drafting, bid comparison, service provider qualification and management.", "risks": "", "support": "", "pctLastWeek": 50, "brdStart": "2026-04-15", "brdSubmittedTarget": "2026-05-20", "designStart": "2026-05-21", "bcgDesignTarget": "2026-06-20", "buildStart": "2026-06-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Intelligent Correspondence Manager", "sector": "HEM Office", "pct": 30, "phase": "Scoping", "risk": "On Track", "past": "* Scope document signed off by Business Owner.\n* Requirements gathering workshops initiated with stakeholders.\n* Translating scope document for ByteDance.", "next": "* Complete requirements gathering workshops with stakeholders.\n* Begin BRD drafting.", "owner": "ماجد العرفج", "champion": "حمد الشريدة", "desc": "Automating the Correspondence Lifecycle from Intake and Classification to Summarization, Intelligent Routing, and Dashboards.", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-07-20", "designStart": "2026-07-21", "bcgDesignTarget": "2026-08-15", "buildStart": "2026-08-15", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Plans Compliance and Design Co-pilot", "sector": "E&C", "pct": 15, "phase": "Scoping", "risk": "On Track", "past": "* Met with licensing department stakeholders.\n* Submitted scope for sign off.\n* Continue BRD generation.", "next": "* Awaiting scope sign off.", "owner": "سعيد علي", "champion": "سارة الغامدي", "desc": "AI engine automatically checks and generates Saudi code-compliant unit and masterplan CADs in order to increase homeownership by Saudi families and increase citizen satisfaction.", "risks": "", "support": "", "pctLastWeek": 15, "brdStart": "2026-06-01", "brdSubmittedTarget": "2026-07-20", "designStart": "2026-07-21", "bcgDesignTarget": "2026-08-25", "buildStart": "2026-08-26", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Expert Committee", "sector": "HEM Office", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* BRD completed and shared with Business Owner.", "next": "* Review and address Business Owner comments.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Pleadings and Settlements", "sector": "HEM Office", "pct": 40, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Draft scoping document prepared.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Policies and Requirements", "sector": "HEM Office", "pct": 40, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Draft scoping document prepared.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Systems and Regulations", "sector": "HEM Office", "pct": 50, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Conducted data gathering meeting with Business Owner.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 40, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
-{"name": "Land Issues", "sector": "HEM Office", "pct": 40, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Draft scoping document prepared.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"}
+{"sector": "HEM Office", "name": "Minister Intelligence Cockpit", "lead": "Not Assigned", "pct": 0, "task": "—", "phase": "—", "risk": "On Track", "notes": "", "past": "", "next": "", "owner": "", "champion": "", "desc": "", "risks": "", "support": "", "isUmbrella": true, "pctLastWeek": 0, "brdStart": null, "brdSubmittedTarget": null, "designStart": null, "bcgDesignTarget": null, "buildStart": null, "buildEnd": null},
+{"name": "Dynamic Subsidy Allocation & Optimization Tool", "lead": "Obada", "sector": "Housing", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Enhanced BRD with new use cases, process flows, and Central Bank data source.\n* Aligned requirements and finalized the scope.\n* BRD signed off.", "next": "* Handed off to BD.\n* Design phase.", "owner": "نايف الصقعبي", "champion": "مشاري الكريديس", "desc": "An integrated residential intelligence center used by analysts in the Housing Support Agency to make housing support decisions for beneficiary segments accurately and efficiently, and it supports the visions and decisions of His Excellency the Minister.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-10", "brdSubmittedTarget": "2026-05-10", "designStart": "2026-05-11", "bcgDesignTarget": "2026-06-15", "buildStart": "2026-06-16", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Smart Housing Co-pilot", "lead": "Obada", "sector": "Housing", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Refined and updated use cases, added new use cases, dedicated data sections, process flow diagrams, and a new data source.", "next": "* Handed off to BD.\n* Design phase.", "owner": "نايف الرشيدي", "champion": "مشاري الكريديس", "desc": "The Smart Housing Co-Pilot is the core AI engine for the Real Estate and Housing Command Center in Saudi Arabia. The platform integrates supply, demand, financing, and regulatory data from more than eight government entities in real time.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-03-01", "brdSubmittedTarget": "2026-04-05", "designStart": "2026-04-06", "bcgDesignTarget": "2026-05-15", "buildStart": "2026-05-16", "buildEnd": "2026-11-16", "ktStart": "2026-11-17", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Policy AI Lab", "lead": "Moazzam", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "د. أحمد الدرويش", "champion": "حمد الشريدة", "desc": "A Comprehensive Generative Center for the Policy Lifecycle: a Unified Registry, Automated Updates, Impact Simulation, and Policy Brief Drafting.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-01", "brdSubmittedTarget": "2026-05-05", "designStart": "2026-05-06", "bcgDesignTarget": "2026-06-15", "buildStart": "2026-06-16", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-25", "tlWindowStart": "2026-01-01"},
+{"name": "Media Appearance v1.0", "lead": "Obada", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "رحاب بن سعيد", "champion": "حمد الشريدة", "desc": "A Unified Platform for Media Monitoring, Analysis, Authoring, and Planning.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-01-15", "brdSubmittedTarget": "2026-03-31", "designStart": "2026-04-01", "bcgDesignTarget": "2026-08-31", "buildStart": "2026-09-01", "buildEnd": "2026-11-20", "ktStart": "2026-11-21", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Digital Human & Citizens Insights Hub", "lead": "Moazzam", "sector": "Shared Services", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "عبير", "champion": "وليد العسكر", "desc": "An integrated system that focuses on unifying communication channels and enhancing the quality of services and responses provided to customers through artificial intelligence and virtual visits.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-05", "designStart": "2026-06-06", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2027-02-28", "ktStart": "2027-03-01", "ktEnd": "2027-03-31", "tlWindowStart": "2026-04-01"},
+{"name": "Internal Audit Genius", "lead": "Obada", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "محمد السعيد", "champion": "حمد الشريدة", "desc": "Intelligent Research, Auditing, and Risk Tools to Automate Due Diligence, Reporting, and Proactive Alerts.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-17", "brdSubmittedTarget": "2026-05-17", "designStart": "2026-05-18", "bcgDesignTarget": "2026-06-30", "buildStart": "2026-07-01", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-16", "tlWindowStart": "2026-01-01"},
+{"name": "Sentiment Pulse AI", "lead": "Moazzam", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "مصطفى الزعتري", "champion": "حمد الشريدة", "desc": "A Real-Time Sentiment Intelligence Platform with Crisis Predictions and Bilingual Reports.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-04", "designStart": "2026-06-05", "bcgDesignTarget": "2026-07-05", "buildStart": "2026-07-06", "buildEnd": "2026-11-01", "ktStart": "2026-11-02", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
+{"name": "Advancing IC with AI", "lead": "Moazzam", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "قصي الفواز", "champion": "حمد الشريدة", "desc": "A Platform for Agreements, Organizations, and International Visits Services, with Alerting Agents and Intelligent Reports.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-21", "brdSubmittedTarget": "2026-05-21", "designStart": "2026-05-22", "bcgDesignTarget": "2026-06-30", "buildStart": "2026-07-01", "buildEnd": "2026-11-05", "ktStart": "2026-11-06", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
+{"name": "Directives Co-pilot", "lead": "Obada", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "عبدالله السيف", "champion": "حمد الشريدة", "desc": "A smart system for tracking directives, monitoring their status and progress, and using AI to recommend the most suitable assignee for each directive.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-04", "designStart": "2026-06-05", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
+{"name": "Smart Scheduling", "lead": "Obada", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Design handoff complete.", "next": "* Design phase.", "owner": "د هديل الزهراني", "champion": "حمد الشريدة", "desc": "Managing Requests and Scheduling of His Excellency the Minister's Meetings, with Priority Assessment, Conflict and Risk Evaluation, and Adaptive Scheduling.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-01", "brdSubmittedTarget": "2026-06-05", "designStart": "2026-06-06", "bcgDesignTarget": "2026-07-16", "buildStart": "2026-07-16", "buildEnd": "2026-11-05", "ktStart": "2026-11-06", "ktEnd": "2026-12-15", "tlWindowStart": "2026-01-01"},
+{"name": "Board and Committees", "lead": "Obada", "sector": "HEM Office", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off.", "next": "* Design phase.", "owner": "طلال القحطاني", "champion": "حمد الشريدة", "desc": "Smart Onboarding for Council Members, Featuring Periodic Briefings, Instant Governance Q&A, and an Institutional Decision History.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-03", "brdSubmittedTarget": "2026-05-03", "designStart": "2026-05-04", "bcgDesignTarget": "2026-05-25", "buildStart": "2026-05-26", "buildEnd": "2026-11-05", "ktStart": "2026-11-06", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
+{"name": "Requirements and Checklist Generator", "lead": "Moazzam", "sector": "E&C", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off by Solutions Owner.\n* BRD handed off to ByteDance.\n* HLSD conversations kicked off.", "next": "* Design phase.", "owner": "سعيد القحطاني", "champion": "Sarah AlGhamdi", "desc": "An AI driven requirements and checklist generator for regulations, licensing and appeals analysis.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-04-20", "brdSubmittedTarget": "2026-05-25", "designStart": "2026-05-26", "bcgDesignTarget": "2026-06-10", "buildStart": "2026-06-11", "buildEnd": "2026-10-31", "ktStart": "2026-11-01", "ktEnd": "2026-12-10", "tlWindowStart": "2026-01-01"},
+{"name": "Demand & Supply Optimizer", "lead": "Obada", "sector": "Housing", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* Updated BRD: incorporated feedback, enhanced data sections, added missing fields/screens, and improved structure.\n* BRD signed off.", "next": "* Translation and handoff to BD.\n* Design phase.", "owner": "نايف الصقعبي", "champion": "مشاري الكريديس", "desc": "An agentic AI platform consisting of one structured agent and four analytical engines. The structured agent provides a chat interface in Arabic or English, automatically identifies the appropriate query form, and generates a shareable PDF report without human intervention.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-04", "brdSubmittedTarget": "2026-06-03", "designStart": "2026-06-04", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2026-10-31", "ktStart": "2026-11-01", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Urban Planning Companion", "lead": "Moazzam", "sector": "Municipal Affairs", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off.", "next": "* Design phase.", "owner": "حاتم الخثلان", "champion": "محمد الدوسري", "desc": "AI co-pilot for diagnosing urban needs, optimizing zoning, and simulating impacts.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-18", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-31", "buildStart": "2026-08-01", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Intelligent Invoice Management", "lead": "Eid", "sector": "Shared Services", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* Completed scoping and BRD drafting.\n* Conducted requirements meeting with Business Owner.", "next": "* Share BRD with Business Owner and ByteDance for review.\n* Schedule BRD review meeting with Business Owner.", "owner": "عبدالعزيز العجلان", "champion": "وليد العسكر", "desc": "A unified AI platform that ingests and categorizes bill data from Tahsel, Makeen, Efa'a, and Sanad into a centralized dashboard for real-time visibility and management.", "risks": "", "support": "", "pctLastWeek": 60, "brdStart": "2026-05-18", "brdSubmittedTarget": "2026-06-20", "designStart": "2026-06-21", "bcgDesignTarget": "2026-07-22", "buildStart": "2026-07-23", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Meeting Genius v2.0", "lead": "Moazzam", "sector": "HEM Office", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* Updated BRD submitted to Solution Owner.", "next": "* Awaiting Sign off.", "owner": "عبدالله السيف", "champion": "حمد الشريدة", "desc": "Transforming Meetings into Actionable Decisions Through Executive Summaries, Directive Extraction, and Execution Tracking.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-05", "brdSubmittedTarget": "2026-06-04", "designStart": "2026-06-05", "bcgDesignTarget": "2026-07-04", "buildStart": "2026-07-05", "buildEnd": "2026-11-30", "ktStart": "2026-12-01", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Financial & Budgeting Co-pilot", "lead": "Saed", "sector": "Shared Services", "pct": 95, "phase": "BRD Completed", "risk": "On Track", "past": "* Sent updated BRD to Business Owner for approval.\n* Awaiting BRD final sign-off.\n* Conducted demo presentation meetings.", "next": "* BRD approved.\n* Coordinating with ByteDance and Business Owner on HLSD requirements.\n* Conducting prototype sessions with ByteDance and Business Owner.", "owner": "علي الكديسي", "champion": "وليد العسكر", "desc": "An AI system for financial analysis and budget forecasting linked to all MOMAH Amana systems.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-04-24", "brdSubmittedTarget": "2026-05-24", "designStart": "2026-05-25", "bcgDesignTarget": "2026-06-24", "buildStart": "2026-06-25", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-20", "tlWindowStart": "2026-01-01"},
+{"name": "Sales Agent Stimulator", "lead": "Obada", "sector": "Housing", "pct": 30, "phase": "Scoping", "risk": "On Track", "past": "* Met with Business Owner, ByteDance, and BCG; agreed to propose new scope within two weeks.\n* Met with AI Champion to identify overall strategy direction.", "next": "* Preparing initial scope based on current solution, solution card, and business requirements.\n* Reviewing scope document with AI Champion, Business Owner, and key stakeholders.", "owner": "الشركة الوطنية للاسكان", "champion": "مشاري الكريديس", "desc": "The \"Smart Digital Sales Agent Stimulator\" is an AI-powered, automated platform designed to stimulate and enhance the performance of real estate sales operations at NHC.", "risks": "", "support": "", "pctLastWeek": 30, "brdStart": "2026-05-31", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-08-03", "buildStart": "2026-08-04", "buildEnd": "2027-01-16", "ktStart": "2027-01-17", "ktEnd": "2027-02-28", "tlWindowStart": "2026-04-01"},
+{"name": "Roads Maintenance AI", "lead": "Saed", "sector": "Municipal Affairs", "pct": 90, "phase": "BRD Completed", "risk": "Delayed", "past": "* Conducted data meeting with ByteDance and Business Owner.\n* Sent BRD draft to Business Owner for review.\n* Received Business Owner's BRD feedback.", "next": "* Incorporating Business Owner feedback into BRD.\n* Awaiting BRD sign-off.\n* Initiating HLSD sessions with ByteDance and Business Owner.\n* Continuing data meetings with ByteDance and Business Owner.", "owner": "د. إبراهيم عبدالله", "champion": "محمد الدوسري", "desc": "An AI system for Road Maintenance.", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-31", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-08-25", "buildStart": "2026-08-26", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Intelligent Investor Center", "lead": "Eid", "sector": "Municipal Affairs", "pct": 75, "phase": "BRD In Progress", "risk": "At Risk", "past": "* Scope and BRD drafting initiated.", "next": "* Share BRD with Business Owner and ByteDance for review.\n* Schedule BRD review meeting with Business Owner.", "owner": "محمد الدوسري", "champion": "اروى المفيز", "desc": "An integrated suite of AI solutions within FURAS that supports the full investment lifecycle—from engagement to decision-making. It enhances efficiency, transparency, and data-driven insights while maintaining governance and human oversight.", "risks": "HLSD in progress prior to BRD approval", "support": "", "pctLastWeek": 65, "brdStart": "2026-04-17", "brdSubmittedTarget": "2026-05-17", "designStart": "2026-05-18", "bcgDesignTarget": "2026-06-16", "buildStart": "2026-06-17", "buildEnd": "2026-11-16", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Intelligent Violations Detector", "lead": "Eid", "sector": "E&C", "pct": 100, "phase": "BRD Submitted", "risk": "On Track", "past": "* BRD signed off.", "next": "* Provide feedback on ByteDance team's comments.", "owner": "خالد مساعد الجبير", "champion": "سارة الغامدي", "desc": "An AI-powered platform that automatically detects and flags violations, streamlining enforcement and compliance workflows.", "risks": "", "support": "", "pctLastWeek": 100, "brdStart": "2026-05-01", "brdSubmittedTarget": "2026-06-05", "designStart": "2026-06-06", "bcgDesignTarget": "2026-07-10", "buildStart": "2026-07-11", "buildEnd": "2026-11-15", "ktStart": "2026-11-16", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "AI Legal Advisor v2.0", "lead": "Eid", "sector": "HEM Office", "pct": 65, "phase": "BRD In Progress", "risk": "On Track", "past": "* Completed Expert Committee BRD.\n* Completed draft scoping document (AI Legal Advisor).\n* Completed data gathering meetings with Business Owner (Systems and Regulations).", "next": "* Review and address Business Owner comments on Expert Committee BRD.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "A Unified Legal Reference with Drafts and Legal Formulations, Benchmarking Comparisons, and Case Outcome Predictions.", "risks": "", "support": "", "pctLastWeek": 65, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Qualification and Procurement Genius", "lead": "Saed", "sector": "Shared Services", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* Conducted requirements gathering sessions for BRD.\n* Submitted draft BRD to Business Owner for review.\n* Awaiting Business Owner feedback.", "next": "* Awaiting BRD final sign-off.\n* Coordinating with ByteDance and Business Owner on HLSD requirements.", "owner": "محمد الماجد", "champion": "وليد العسكر", "desc": "End-to-end provider qualification and procurement optimization, incl. RFP drafting, bid comparison, service provider qualification and management.", "risks": "", "support": "", "pctLastWeek": 50, "brdStart": "2026-04-15", "brdSubmittedTarget": "2026-05-20", "designStart": "2026-05-21", "bcgDesignTarget": "2026-06-20", "buildStart": "2026-06-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Intelligent Correspondence Manager", "lead": "Nora", "sector": "HEM Office", "pct": 30, "phase": "Scoping", "risk": "On Track", "past": "* Scope document signed off by Business Owner.\n* Requirements gathering workshops initiated with stakeholders.\n* Translating scope document for ByteDance.", "next": "* Complete requirements gathering workshops with stakeholders.\n* Begin BRD drafting.", "owner": "ماجد العرفج", "champion": "حمد الشريدة", "desc": "Automating the Correspondence Lifecycle from Intake and Classification to Summarization, Intelligent Routing, and Dashboards.", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-07-20", "designStart": "2026-07-21", "bcgDesignTarget": "2026-08-15", "buildStart": "2026-08-15", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Plans Compliance and Design Co-pilot", "lead": "Moazzam", "sector": "E&C", "pct": 15, "phase": "Scoping", "risk": "On Track", "past": "* Met with licensing department stakeholders.\n* Submitted scope for sign off.\n* Continue BRD generation.", "next": "* Awaiting scope sign off.", "owner": "سعيد علي", "champion": "سارة الغامدي", "desc": "AI engine automatically checks and generates Saudi code-compliant unit and masterplan CADs in order to increase homeownership by Saudi families and increase citizen satisfaction.", "risks": "", "support": "", "pctLastWeek": 15, "brdStart": "2026-06-01", "brdSubmittedTarget": "2026-07-20", "designStart": "2026-07-21", "bcgDesignTarget": "2026-08-25", "buildStart": "2026-08-26", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Expert Committee", "lead": "Eid", "sector": "HEM Office", "pct": 90, "phase": "BRD Completed", "risk": "On Track", "past": "* BRD completed and shared with Business Owner.", "next": "* Review and address Business Owner comments.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 90, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Pleadings and Settlements", "lead": "Eid", "sector": "HEM Office", "pct": 40, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Draft scoping document prepared.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Policies and Requirements", "lead": "Eid", "sector": "HEM Office", "pct": 40, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Draft scoping document prepared.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Systems and Regulations", "lead": "Eid", "sector": "HEM Office", "pct": 50, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Conducted data gathering meeting with Business Owner.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 40, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"},
+{"name": "Land Issues", "lead": "Eid", "sector": "HEM Office", "pct": 40, "phase": "Requirements Gathering", "risk": "On Track", "past": "* Draft scoping document prepared.", "next": "* Finalize scope and start BRD drafting.", "owner": "سلطان الهجلة", "champion": "حمد الشريدة", "desc": "", "risks": "", "support": "", "pctLastWeek": 28, "brdStart": "2026-05-20", "brdSubmittedTarget": "2026-06-30", "designStart": "2026-07-01", "bcgDesignTarget": "2026-07-20", "buildStart": "2026-07-21", "buildEnd": "2026-11-10", "ktStart": "2026-11-11", "ktEnd": "2026-12-31", "tlWindowStart": "2026-01-01"}
 ];
 const SOLUTION_ORDER = ["Minister Intelligence Cockpit", "Sentiment Pulse AI", "Meeting Genius v2.0", "Smart Scheduling", "Directives Co-pilot", "Internal Audit Genius", "Policy AI Lab", "Media Appearance v1.0", "Board and Committees", "Advancing IC with AI", "Intelligent Correspondence Manager", "AI Legal Advisor v2.0", "Expert Committee", "Pleadings and Settlements", "Policies and Requirements", "Systems and Regulations", "Land Issues", "Roads Maintenance AI", "Intelligent Investor Center", "Urban Planning Companion", "Dynamic Subsidy Allocation & Optimization Tool", "Smart Housing Co-pilot", "Demand & Supply Optimizer", "Sales Agent Stimulator", "Digital Human & Citizens Insights Hub", "Intelligent Invoice Management", "Financial & Budgeting Co-pilot", "Qualification and Procurement Genius", "Intelligent Violations Detector", "Requirements and Checklist Generator", "Plans Compliance and Design Co-pilot"];
 
@@ -1230,8 +1283,7 @@ function buildCardHtml(d, withTimeline) {
   const rClass = d.risk==='Delayed'?'risk-delayed':d.risk==='At Risk'?'risk-atrisk':'risk-ontrack';
   const pastLines = d.past.split('\n').filter(Boolean).map(l=>`<div>${l.replace(/^\*\s*/,'• ')}</div>`).join('');
   const nextLines = d.next.split('\n').filter(Boolean).map(l=>`<div>${l.replace(/^\*\s*/,'• ')}</div>`).join('');
-  return `<div class="proj-card ${rClass}" id="proj-card-${DATA.indexOf(d)}" onclick="openModal(${DATA.indexOf(d)})">
-      <div class="proj-head">
+  return `<div class="proj-card ${rClass}" id="proj-card-${DATA.indexOf(d)}" onclick="openModal(${DATA.indexOf(d)})">      <div class="proj-head">
         <div>
           <div class="proj-name">${d.name}</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px">${d.phase}</div>
@@ -1540,6 +1592,312 @@ function showSection(id) {
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('sec-'+id).classList.add('active');
   event.target.classList.add('active');
+  if(id==='teamlens') renderTeamLens();
+  if(id==='pivot') renderPivot();
+  if(id==='alerts') renderAlerts();
+}
+
+// ── PM VIEWS (pct values are 0–100 in DATA) ──────────────────────────────────
+const LEADS = ['Obada','Moazzam','Eid','Saed','Nora','Not Assigned'];
+const LEAD_COLORS = {Obada:'#3b82f6',Moazzam:'#8b5cf6',Eid:'#f59e0b',Saed:'#10b981',Nora:'#ec4899','Not Assigned':'#94a3b8'};
+
+function realData(){ return (typeof DATA!=='undefined'?DATA:[]).filter(d=>!d.isUmbrella && d.name && typeof d.pct==='number'); }
+function isLate(d){ return d.brdSubmittedTarget && new Date(d.brdSubmittedTarget)<new Date() && d.pct<100; }
+function deltaSpan(delta){
+  if(delta>0) return `<span style="color:#10b981;font-weight:700">▲ +${delta}%</span>`;
+  if(delta<0) return `<span style="color:#ef4444;font-weight:700">▼ ${delta}%</span>`;
+  return `<span style="color:#cbd5e1">— 0%</span>`;
+}
+
+// ── TEAM LENS ────────────────────────────────────────────────────────────────
+function renderTeamLens(){
+  const data = realData();
+  const wrap = document.getElementById('pm-teamlens-body');
+  if(!wrap) return;
+
+  const fmtD = s => s ? new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : '—';
+  const phaseColor = p => /Submitted|Signed/.test(p||'')?'#10b981':/Completed/.test(p||'')?'#22c55e':/In Progress/.test(p||'')?'#3b82f6':/Requirements/.test(p||'')?'#f59e0b':/Scoping/.test(p||'')?'#a855f7':'#94a3b8';
+  const bullets = t => parseBullets(t);
+
+  // ── team-wide banner ──
+  const tot = data.length;
+  const teamAvg = Math.round(data.reduce((a,d)=>a+d.pct,0)/tot);
+  const teamAvgLast = Math.round(data.reduce((a,d)=>a+(d.pctLastWeek||0),0)/tot);
+  const banner = `<div style="background:linear-gradient(135deg,#1e293b,#3b3263);border-radius:14px;padding:18px 22px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;color:#fff;margin-bottom:14px">
+    <div><div style="font-size:11px;color:#a5b0c4;text-transform:uppercase;letter-spacing:.05em">Team average</div><div style="font-size:28px;font-weight:800;line-height:1.1">${teamAvg}% <span style="font-size:13px">${deltaSpan(teamAvg-teamAvgLast)}</span></div></div>
+    <div style="width:1px;height:38px;background:rgba(255,255,255,.15)"></div>
+    <div><div style="font-size:11px;color:#a5b0c4;text-transform:uppercase;letter-spacing:.05em">Solutions</div><div style="font-size:28px;font-weight:800;line-height:1.1">${tot}</div></div>
+    <div><div style="font-size:11px;color:#a5b0c4;text-transform:uppercase;letter-spacing:.05em">Moved this week</div><div style="font-size:28px;font-weight:800;line-height:1.1">${data.filter(d=>d.pct>(d.pctLastWeek||0)).length}</div></div>
+    <div><div style="font-size:11px;color:#a5b0c4;text-transform:uppercase;letter-spacing:.05em">Completed</div><div style="font-size:28px;font-weight:800;line-height:1.1;color:#4ade80">${data.filter(d=>d.pct>=100).length}</div></div>
+    <div><div style="font-size:11px;color:#a5b0c4;text-transform:uppercase;letter-spacing:.05em">At risk / late</div><div style="font-size:28px;font-weight:800;line-height:1.1;color:#f87171">${data.filter(d=>d.risk==='At Risk'||d.risk==='Delayed'||isLate(d)).length}</div></div>
+  </div>`;
+
+  const bars = LEADS.map(lead=>{
+    const sols = data.filter(d=>d.lead===lead);
+    if(!sols.length) return '';
+    const avg = Math.round(sols.reduce((a,d)=>a+d.pct,0)/sols.length);
+    const avgLast = Math.round(sols.reduce((a,d)=>a+(d.pctLastWeek||0),0)/sols.length);
+    const delta = avg - avgLast;
+    const moved = sols.filter(d=>d.pct>(d.pctLastWeek||0)).length;
+    const stalled = sols.filter(d=>d.pct===(d.pctLastWeek||0) && d.pct<100).length;
+    const totalGain = sols.reduce((a,d)=>a+Math.max(0,d.pct-(d.pctLastWeek||0)),0);
+    const atRisk = sols.filter(d=>d.risk==='At Risk'||d.risk==='Delayed');
+    const lateOnes = sols.filter(isLate);
+    const done = sols.filter(d=>d.pct>=100).length;
+    const attention = sols.filter(d=>d.risk==='At Risk'||d.risk==='Delayed'||isLate(d)).length;
+    const color = LEAD_COLORS[lead]||'#64748b';
+    const initials = lead==='Not Assigned'?'?':lead.slice(0,2).toUpperCase();
+    const safeId = 'lead-'+lead.replace(/[^a-zA-Z]/g,'');
+
+    const phaseCounts = {};
+    sols.forEach(s=>{ phaseCounts[s.phase||'—'] = (phaseCounts[s.phase||'—']||0)+1; });
+    const phaseMix = Object.entries(phaseCounts).map(([p,c])=>`<span title="${p}: ${c}" style="height:8px;width:${c/sols.length*100}%;background:${phaseColor(p)};display:inline-block"></span>`).join('');
+
+    // ── RICH expandable detail per solution ──
+    const detail = sols.slice().sort((a,b)=>(b.pct-(b.pctLastWeek||0))-(a.pct-(a.pctLastWeek||0))).map(s=>{
+      const sd = s.pct-(s.pctLastWeek||0);
+      const late = isLate(s);
+      const past = bullets(s.past), next = bullets(s.next);
+      const riskBadge = s.risk==='At Risk'?'<span style="background:#fef2f2;color:#dc2626;font-size:9px;font-weight:700;padding:1px 7px;border-radius:99px">AT RISK</span>'
+                       :s.risk==='Delayed'?'<span style="background:#fff7ed;color:#d97706;font-size:9px;font-weight:700;padding:1px 7px;border-radius:99px">DELAYED</span>'
+                       :s.pct>=100?'<span style="background:#f0fdf4;color:#16a34a;font-size:9px;font-weight:700;padding:1px 7px;border-radius:99px">DONE</span>':'';
+      const moveTag = sd>0?`<span style="color:#10b981;font-size:11px;font-weight:700">▲ +${sd}</span>`:sd<0?`<span style="color:#ef4444;font-size:11px;font-weight:700">▼ ${sd}</span>`:`<span style="color:#cbd5e1;font-size:11px">no move</span>`;
+      const listHtml = (arr,empty) => arr.length?`<ul style="margin:0;padding-left:16px">${arr.map(x=>`<li style="font-size:11.5px;color:#475569;line-height:1.55;margin-bottom:2px">${x}</li>`).join('')}</ul>`:`<span style="font-size:11.5px;color:#cbd5e1;font-style:italic">${empty}</span>`;
+      return `<div style="padding:14px 18px;border-bottom:1px solid #eef2f7;${late||s.risk==='At Risk'?'background:#fffbfb':''}">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="flex:1;font-size:13.5px;font-weight:700;color:#1e293b">${s.name} ${late?'<span style="color:#ef4444;font-size:9px;font-weight:700">⏰LATE</span>':''} ${riskBadge}</span>
+          <span style="font-size:10px;color:#fff;background:${phaseColor(s.phase)};padding:2px 9px;border-radius:99px;white-space:nowrap">${s.phase||'—'}</span>
+          ${moveTag}
+          <div style="width:80px;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;position:relative;flex-shrink:0">
+            <div style="position:absolute;left:0;top:0;height:100%;width:${s.pctLastWeek||0}%;background:#cbd5e1"></div>
+            <div style="position:absolute;left:0;top:0;height:100%;width:${s.pct}%;background:${color};border-radius:4px"></div>
+          </div>
+          <span style="font-size:13px;font-weight:800;color:${color};width:38px;text-align:right">${s.pct}%</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:8px">
+          <div><div style="font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">✓ Past actions</div>${listHtml(past,'No actions logged')}</div>
+          <div><div style="font-size:9px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">→ Next steps</div>${listHtml(next,'No next steps')}</div>
+        </div>
+        ${s.risks?`<div style="font-size:11.5px;color:#dc2626;background:#fef2f2;border-radius:6px;padding:6px 10px;margin-bottom:6px">⚠️ <b>Risk:</b> ${s.risks}</div>`:''}
+        ${s.support?`<div style="font-size:11.5px;color:#c2410c;background:#fff7ed;border-radius:6px;padding:6px 10px;margin-bottom:6px">🆘 <b>Support needed:</b> ${s.support}</div>`:''}
+        <div style="display:flex;flex-wrap:wrap;gap:10px;font-size:10px;color:#94a3b8;margin-top:6px">
+          <span>📅 BRD start: <b style="color:#64748b">${fmtD(s.brdStart)}</b></span>
+          <span>🎯 Submit target: <b style="color:${late?'#dc2626':'#64748b'}">${fmtD(s.brdSubmittedTarget)}</b></span>
+          <span>🎨 Design: <b style="color:#64748b">${fmtD(s.designStart)}</b></span>
+          <span>🔨 Build: <b style="color:#64748b">${fmtD(s.buildStart)}–${fmtD(s.buildEnd)}</b></span>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:14px${attention?';border-left:4px solid '+(lateOnes.length||atRisk.length?'#ef4444':'#f59e0b'):''}">
+      <!-- HORIZONTAL HEADER -->
+      <div style="display:flex;align-items:stretch;cursor:pointer" onclick="toggleLead('${safeId}',this)">
+        <div class="lead-color-head" style="background:${color};display:flex;align-items:center;gap:14px;padding:16px 18px;min-width:240px;position:relative">
+          <div style="width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;flex-shrink:0">${initials}</div>
+          <div style="flex:1">
+            <div style="font-size:17px;font-weight:800;color:#fff">${lead}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.85)">${sols.length} solutions${done?` · ${done} done`:''}</div>
+            ${attention?`<div style="font-size:10px;color:#fff;background:rgba(0,0,0,.18);border-radius:99px;padding:1px 8px;margin-top:3px;display:inline-block">⚠ ${attention} need attention</div>`:`<div style="font-size:10px;color:rgba(255,255,255,.9);margin-top:3px">✓ all clear</div>`}
+          </div>
+          <button class="lead-copy-btn" onclick="event.stopPropagation();copyLeadSummary('${lead}')" title="Copy summary for WhatsApp / email" style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,.2);border:none;border-radius:6px;color:#fff;font-size:11px;padding:3px 8px;cursor:pointer">📋 Copy</button>
+        </div>
+        <div style="flex:1;display:flex;align-items:center">
+          ${[['AVG','#1e293b',avg+'%',`${delta>0?'▲ +'+delta:delta<0?'▼ '+delta:'— 0'}% wk`,false],
+             ['PTS GAINED','#10b981','+'+totalGain,'total this week',false],
+             ['AVG PTS GAINED', delta>0?'#10b981':delta<0?'#ef4444':'#94a3b8', (delta>0?'+':'')+delta+'%','avg this week',true],
+             ['MOVED','#3b82f6',moved+'/'+sols.length, stalled?stalled+' stalled':'all moving',false],
+             ['AT RISK', atRisk.length?'#ef4444':'#10b981', atRisk.length, atRisk.length?'need attention':'clear',false],
+             ['LATE', lateOnes.length?'#c2410c':'#10b981', lateOnes.length,'past target',false]
+            ].map(([lbl,c,val,sub,noBorder])=>`
+            <div style="flex:1;text-align:center;padding:10px 6px;${noBorder?'':'border-left:1px solid #f1f5f9'}">
+              <div style="font-size:20px;font-weight:800;color:${c};line-height:1.1">${val}</div>
+              <div style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:2px">${lbl}</div>
+              <div style="font-size:9px;color:#cbd5e1;margin-top:1px">${sub}</div>
+            </div>`).join('')}
+          <div style="padding:0 16px;color:#cbd5e1;font-size:18px" id="${safeId}-chev">⌄</div>
+        </div>
+      </div>
+      <!-- human weekly summary strip (always visible) -->
+      <div style="padding:7px 20px;background:#fafbfc;font-size:11.5px;color:#475569;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9">📋 <b>This week:</b> ${leadHuman(sols)}</div>
+      <!-- phase mix -->
+      <div style="display:flex;height:8px;background:#f1f5f9">${phaseMix}</div>
+      <!-- EXPANDABLE DETAIL -->
+      <div id="${safeId}" style="display:none">
+        ${detail}
+        <div style="display:flex;align-items:center;gap:14px;padding:8px 20px;font-size:9px;color:#94a3b8;background:#fafbfc">
+          <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:12px;height:7px;background:#cbd5e1;border-radius:2px;display:inline-block"></span>last week</span>
+          <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:12px;height:7px;background:${color};border-radius:2px;display:inline-block"></span>now</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML = banner + bars || '<p style="color:#94a3b8">No data.</p>';
+}
+
+// helpers
+function parseBullets(t){ return (t||'').split(/\n|(?=\* )/).map(x=>x.replace(/^[*\-•]\s*/,'').trim()).filter(Boolean); }
+function leadHuman(sols){
+  const moved=sols.filter(d=>d.pct>(d.pctLastWeek||0)).length;
+  const stalled=sols.filter(d=>d.pct===(d.pctLastWeek||0)&&d.pct<100).length;
+  const atRisk=sols.filter(d=>d.risk==='At Risk'||d.risk==='Delayed').length;
+  const late=sols.filter(isLate).length;
+  const done=sols.filter(d=>d.pct>=100).length;
+  const p=[];
+  if(moved) p.push(`<span style="color:#10b981">${moved} moved forward</span>`);
+  if(done) p.push(`${done} completed`);
+  if(stalled) p.push(`<span style="color:#94a3b8">${stalled} stalled</span>`);
+  if(atRisk) p.push(`<span style="color:#dc2626">${atRisk} at risk</span>`);
+  if(late) p.push(`<span style="color:#c2410c">${late} past target</span>`);
+  if(!p.length) p.push('steady — no changes this week');
+  return p.join(' · ');
+}
+window.toggleLead=function(id,el){
+  const panel=document.getElementById(id);
+  const open=panel.style.display!=='none';
+  panel.style.display=open?'none':'block';
+  const chev=document.getElementById(id+'-chev'); if(chev) chev.textContent=open?'⌄':'⌃';
+};
+window.copyLeadSummary=function(lead){
+  const sols=realData().filter(d=>d.lead===lead);
+  if(!sols.length) return;
+  const avg=Math.round(sols.reduce((a,d)=>a+d.pct,0)/sols.length);
+  const avgLast=Math.round(sols.reduce((a,d)=>a+(d.pctLastWeek||0),0)/sols.length);
+  const delta=avg-avgLast;
+  const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  let txt=`*${lead} — Weekly Summary* (${today})\n`;
+  txt+=`Avg progress: ${avg}% (${delta>=0?'+':''}${delta}% vs last week)\n`;
+  txt+=`${sols.length} solutions · ${sols.filter(d=>d.pct>(d.pctLastWeek||0)).length} moved · ${sols.filter(d=>d.risk==='At Risk'||d.risk==='Delayed').length} at risk · ${sols.filter(isLate).length} late\n\n`;
+  sols.slice().sort((a,b)=>b.pct-a.pct).forEach(s=>{
+    const sd=s.pct-(s.pctLastWeek||0);
+    const flag=s.risk==='At Risk'?' [AT RISK]':s.risk==='Delayed'?' [DELAYED]':isLate(s)?' [LATE]':'';
+    txt+=`• ${s.name}: ${s.pct}%${sd>0?` (+${sd})`:''} — ${s.phase||'—'}${flag}\n`;
+    const nx=parseBullets(s.next)[0];
+    if(nx) txt+=`   -> ${nx}\n`;
+  });
+  const done=()=>toastCopy(lead);
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
+  } else fallbackCopy(txt,done);
+};
+function fallbackCopy(txt,cb){ const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();cb&&cb(); }
+function toastCopy(lead){
+  let t=document.getElementById('copy-toast');
+  if(!t){t=document.createElement('div');t.id='copy-toast';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.35);opacity:0;transition:opacity .3s';document.body.appendChild(t);}
+  t.textContent="✓ "+lead+"'s summary copied — paste into WhatsApp/email";
+  requestAnimationFrame(()=>t.style.opacity='1');
+  clearTimeout(window._ctTimer);
+  window._ctTimer=setTimeout(()=>{t.style.opacity='0';},2200);
+}
+
+
+
+// ── PIVOT ────────────────────────────────────────────────────────────────────
+let pivotGroupBy = 'lead';
+let pivotSort = {col:'avg',dir:-1};
+function renderPivot(){
+  const data = realData();
+  const wrap = document.getElementById('pm-pivot-body');
+  if(!wrap) return;
+  const groups = {};
+  data.forEach(d=>{
+    const key = pivotGroupBy==='lead'?(d.lead||'Not Assigned')
+               :pivotGroupBy==='sector'?(d.sector||'—')
+               :pivotGroupBy==='phase'?(d.phase||'—')
+               :(d.risk||'—');
+    if(!groups[key]) groups[key]={key,count:0,sumPct:0,sumLast:0,atRisk:0,delayed:0,onTrack:0,moved:0};
+    const g=groups[key];
+    g.count++; g.sumPct+=d.pct; g.sumLast+=(d.pctLastWeek||0);
+    if(d.pct>(d.pctLastWeek||0)) g.moved++;
+    if(d.risk==='At Risk') g.atRisk++; else if(d.risk==='Delayed') g.delayed++; else g.onTrack++;
+  });
+  let rows = Object.values(groups).map(g=>({...g,
+    avg:Math.round(g.sumPct/g.count), avgLast:Math.round(g.sumLast/g.count),
+    delta:Math.round(g.sumPct/g.count)-Math.round(g.sumLast/g.count)}));
+  rows.sort((a,b)=>(b[pivotSort.col]>a[pivotSort.col]?1:b[pivotSort.col]<a[pivotSort.col]?-1:0)*pivotSort.dir);
+
+  const th=(label,col)=>{
+    const active=pivotSort.col===col;
+    const arrow=active?(pivotSort.dir===-1?' ↓':' ↑'):'';
+    return `<th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:700;color:${active?'#7b46f0':'#475569'};cursor:pointer;white-space:nowrap;background:#f8fafc;border-bottom:2px solid #e2e8f0" onclick="setPivotSort('${col}')">${label}${arrow}</th>`;
+  };
+  wrap.innerHTML = `<table style="width:100%;border-collapse:collapse">
+    <thead><tr>
+      ${th('Group','key')}${th('Solutions','count')}${th('This Wk','avg')}${th('Last Wk','avgLast')}${th('Δ Week','delta')}${th('Moved','moved')}${th('On Track','onTrack')}${th('Delayed','delayed')}${th('At Risk','atRisk')}
+    </tr></thead>
+    <tbody>${rows.map((r,i)=>{
+      const barColor = r.avg>=80?'#10b981':r.avg>=50?'#f59e0b':'#ef4444';
+      const deltaColor = r.delta>0?'#10b981':r.delta<0?'#ef4444':'#94a3b8';
+      return `<tr style="border-bottom:1px solid #f1f5f9;${i%2?'background:#fafafa':''}">
+        <td style="padding:10px 14px;font-size:13px;font-weight:600;color:#1e293b">${r.key}</td>
+        <td style="padding:10px 14px;font-size:13px;color:#475569;text-align:center">${r.count}</td>
+        <td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden"><div style="width:${r.avg}%;height:100%;background:${barColor};border-radius:4px"></div></div><span style="font-size:13px;font-weight:700;color:${barColor}">${r.avg}%</span></div></td>
+        <td style="padding:10px 14px;font-size:13px;color:#64748b;text-align:center">${r.avgLast}%</td>
+        <td style="padding:10px 14px;font-size:13px;font-weight:700;color:${deltaColor};text-align:center">${r.delta>0?'+':''}${r.delta}%</td>
+        <td style="padding:10px 14px;font-size:13px;color:#3b82f6;text-align:center">${r.moved}/${r.count}</td>
+        <td style="padding:10px 14px;font-size:13px;color:#10b981;text-align:center">${r.onTrack}</td>
+        <td style="padding:10px 14px;font-size:13px;color:#f59e0b;text-align:center">${r.delayed||'—'}</td>
+        <td style="padding:10px 14px;font-size:13px;color:#ef4444;text-align:center">${r.atRisk||'—'}</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+window.setPivotSort = function(col){
+  if(pivotSort.col===col) pivotSort.dir*=-1; else {pivotSort.col=col;pivotSort.dir=-1;}
+  renderPivot();
+};
+window.setPivotGroup = function(g){
+  pivotGroupBy=g;
+  document.querySelectorAll('.pivot-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderPivot();
+};
+
+// ── ALERTS ───────────────────────────────────────────────────────────────────
+function renderAlerts(){
+  const data = realData();
+  const today = new Date();
+  const wrap = document.getElementById('pm-alerts-body');
+  if(!wrap) return;
+
+  const atRisk    = data.filter(d=>d.risk==='At Risk');
+  const delayed   = data.filter(d=>d.risk==='Delayed');
+  const pastTarget= data.filter(d=>isLate(d) && d.risk!=='At Risk' && d.risk!=='Delayed');
+  const noMove    = data.filter(d=>d.pctLastWeek!=null && d.pct===d.pctLastWeek && d.pct<100 && d.risk!=='At Risk' && d.risk!=='Delayed');
+  const nearDue   = data.filter(d=>{
+    if(!d.brdSubmittedTarget||d.pct>=100) return false;
+    const diff=(new Date(d.brdSubmittedTarget)-today)/(1000*60*60*24);
+    return diff>=0 && diff<=14;
+  });
+
+  function section(title, icon, color, bg, items, noteField){
+    if(!items.length) return '';
+    const rows = items.map(d=>{
+      const note = noteField?d[noteField]:'';
+      const sd = d.pct-(d.pctLastWeek||0);
+      return `<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9">
+        <span style="font-size:16px;margin-top:1px">${icon}</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:#1e293b">${d.name}</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px">${d.lead||'Not Assigned'} · ${d.sector||'—'} · ${d.phase||'—'} · <b>${d.pct}%</b> ${sd>0?`<span style="color:#10b981">(+${sd} wk)</span>`:sd===0?'<span style="color:#94a3b8">(no move)</span>':''}</div>
+          ${note?`<div style="font-size:11px;color:#dc2626;margin-top:4px;background:#fef2f2;padding:4px 8px;border-radius:4px">${note}</div>`:''}
+        </div>
+        ${d.brdSubmittedTarget?`<div style="font-size:11px;color:#94a3b8;white-space:nowrap">Target: ${d.brdSubmittedTarget}</div>`:''}
+      </div>`;
+    }).join('');
+    return `<div style="background:#fff;border:1px solid #e2e8f0;border-left:4px solid ${color};border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:${color};margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        <span style="background:${bg};color:${color};padding:2px 10px;border-radius:99px;font-size:12px">${items.length}</span>${title}
+      </div>${rows}</div>`;
+  }
+
+  const allClear = !atRisk.length && !delayed.length && !pastTarget.length && !noMove.length && !nearDue.length;
+  wrap.innerHTML = allClear
+    ? '<div style="text-align:center;padding:3rem;color:#10b981;font-size:15px">✅ No alerts — everything looks on track!</div>'
+    : section('At Risk','🔴','#dc2626','#fef2f2',atRisk,'risks')
+    + section('Delayed','🟠','#d97706','#fff7ed',delayed,'')
+    + section('Past Target Date','🕐','#c2410c','#fff7ed',pastTarget,'')
+    + section('No Progress This Week','⏸️','#7c3aed','#f5f3ff',noMove,'')
+    + section('Due Within 14 Days','📅','#0369a1','#eff6ff',nearDue,'');
 }
 </script>
 </body>
