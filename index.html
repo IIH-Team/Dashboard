@@ -1689,7 +1689,7 @@ function renderTeamLens(){
   }).filter(Boolean);
 
   // 2-col grid
-  const grid = `<div style="display:grid;grid-template-columns:1fr;gap:12px">${cards.join('')}</div>`;
+  const grid = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${cards.join('')}</div>`;
 
   // ── LEAD MODAL (popup per solution) ──
   const modal = `<div id="tl-modal-overlay" onclick="if(event.target===this)closeTlModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center;padding:20px">
