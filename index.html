@@ -705,16 +705,8 @@
   </div>
 </div>
 
-<footer>Ideal Innovation House &nbsp;|&nbsp; Empowering Innovation, Enriching Lives &nbsp;|&nbsp; iih.ai &nbsp;|&nbsp; MOMAH AI Solutions — Jun 2026</footer>
-
 <!-- ══ PM: TEAM LENS ══════════════════════════════════════════════════════ -->
 <div class="section" id="sec-teamlens">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-    <div>
-      <div style="font-size:18px;font-weight:700;color:#1e293b">👥 Team Lens</div>
-      <div style="font-size:13px;color:#64748b;margin-top:2px">Per-member workload, progress & risk — internal view</div>
-    </div>
-  </div>
   <div id="pm-teamlens-body" style="display:block"></div>
 </div>
 
@@ -1590,7 +1582,7 @@ function renderTeamLens(){
   const tot = data.length;
   const teamAvg = Math.round(data.reduce((a,d)=>a+d.pct,0)/tot);
   const teamAvgLast = Math.round(data.reduce((a,d)=>a+(d.pctLastWeek||0),0)/tot);
-  const banner = `<div style="background:#1e293b;border-radius:12px;padding:16px 22px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;color:#fff;margin-bottom:14px">
+  const banner = `<div style="background:#1e293b;border-radius:0;padding:16px 22px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;color:#fff;margin-bottom:14px;margin-left:-28px;margin-right:-28px;margin-top:-24px">
     <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Team avg</div><div style="font-size:26px;font-weight:700;line-height:1.1">${teamAvg}% <span style="font-size:12px">${deltaSpan(teamAvg-teamAvgLast)}</span></div></div>
     <div style="width:1px;height:32px;background:rgba(255,255,255,.12)"></div>
     <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Solutions</div><div style="font-size:26px;font-weight:700">${tot}</div></div>
@@ -1923,5 +1915,6 @@ function renderAlerts(){
     + section('Due Within 14 Days','📅','#0369a1','#eff6ff',nearDue,'');
 }
 </script>
+<footer>Ideal Innovation House &nbsp;|&nbsp; Empowering Innovation, Enriching Lives &nbsp;|&nbsp; iih.ai &nbsp;|&nbsp; MOMAH AI Solutions — Jun 2026</footer>
 </body>
 </html>
