@@ -1582,15 +1582,64 @@ function renderTeamLens(){
   const tot = data.length;
   const teamAvg = Math.round(data.reduce((a,d)=>a+d.pct,0)/tot);
   const teamAvgLast = Math.round(data.reduce((a,d)=>a+(d.pctLastWeek||0),0)/tot);
-  const banner = `<div style="background:#1e293b;border-radius:10px;padding:16px 22px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;color:#fff;margin-bottom:14px">
+
+  // phase counts
+  const phCounts = {'BRD Submitted':0,'BRD Completed':0,'BRD In Progress':0,'Requirements Gathering':0,'Scoping':0};
+  data.forEach(d=>{ if(phCounts[d.phase]!==undefined) phCounts[d.phase]++; });
+
+  const stat = (label, value, color) =>
+    `<div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">${label}</div><div style="font-size:26px;font-weight:700${color?`;color:${color}`:''}">` + value + `</div></div>`;
+
+  // clickable stat — shows popup with project list
+  const statGroups = {
+    'Solutions':       data,
+    'BRD Submitted':   data.filter(d=>d.phase==='BRD Submitted'),
+    'BRD Completed':   data.filter(d=>d.phase==='BRD Completed'),
+    'BRD In Progress': data.filter(d=>d.phase==='BRD In Progress'),
+    'Req. Gathering':  data.filter(d=>d.phase==='Requirements Gathering'),
+    'Scoping':         data.filter(d=>d.phase==='Scoping'),
+    'Moved':           data.filter(d=>d.pct>(d.pctLastWeek||0)),
+    'At Risk':         data.filter(d=>d.risk==='At Risk'||d.risk==='Delayed'),
+    'Need Support':    data.filter(d=>d.backlogSupport==='Yes'),
+  };
+  // store for click handler
+  window._tlStatGroups = statGroups;
+
+  const clickStat = (label, value, color) => {
+    const col = color ? `color:${color}` : 'color:#fff';
+    return `<div onclick="openBannerPopup('${label}')" style="cursor:pointer;transition:opacity .15s" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">${label}</div>
+      <div style="font-size:26px;font-weight:700;${col}">${value}</div>
+    </div>`;
+  };
+
+  const banner = `<div style="background:#1e293b;border-radius:10px;padding:16px 22px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;color:#fff;margin-bottom:14px">
     <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Team avg</div><div style="font-size:26px;font-weight:700;line-height:1.1">${teamAvg}% <span style="font-size:12px">${deltaSpan(teamAvg-teamAvgLast)}</span></div></div>
     <div style="width:1px;height:32px;background:rgba(255,255,255,.12)"></div>
-    <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Solutions</div><div style="font-size:26px;font-weight:700">${tot}</div></div>
-    <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Moved</div><div style="font-size:26px;font-weight:700">${data.filter(d=>d.pct>(d.pctLastWeek||0)).length}</div></div>
-    <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Completed</div><div style="font-size:26px;font-weight:700;color:#4ade80">${data.filter(d=>d.pct>=100).length}</div></div>
-    <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">At risk/late</div><div style="font-size:26px;font-weight:700;color:#f87171">${data.filter(d=>d.risk==='At Risk'||d.risk==='Delayed'||isLate(d)).length}</div></div>
-    <div><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Need support</div><div style="font-size:26px;font-weight:700;color:#fbbf24">${data.filter(d=>d.backlogSupport==='Yes').length}</div></div>
+    ${clickStat('Solutions',       tot)}
+    ${clickStat('BRD Submitted',   phCounts['BRD Submitted'],          '#4ade80')}
+    ${clickStat('BRD Completed',   phCounts['BRD Completed'],          '#22c55e')}
+    ${clickStat('BRD In Progress', phCounts['BRD In Progress'],        '#60a5fa')}
+    ${clickStat('Req. Gathering',  phCounts['Requirements Gathering'], '#fbbf24')}
+    ${clickStat('Scoping',         phCounts['Scoping'],                '#c084fc')}
+    <div style="width:1px;height:32px;background:rgba(255,255,255,.12)"></div>
+    ${clickStat('Moved',           data.filter(d=>d.pct>(d.pctLastWeek||0)).length,          null)}
+    ${clickStat('At Risk',         data.filter(d=>d.risk==='At Risk'||d.risk==='Delayed').length, '#f87171')}
+    ${clickStat('Need Support',    data.filter(d=>d.backlogSupport==='Yes').length,           '#fbbf24')}
+  </div>
+
+  <!-- Banner stat popup -->
+  <div id="tl-banner-popup-overlay" onclick="if(event.target===this)closeBannerPopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;align-items:center;justify-content:center">
+    <div style="background:#1e293b;border-radius:12px;padding:0;min-width:320px;max-width:480px;width:90%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.5)">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1)">
+        <div id="tl-banner-popup-title" style="font-size:15px;font-weight:700;color:#fff"></div>
+        <button onclick="closeBannerPopup()" style="background:none;border:none;color:#94a3b8;font-size:20px;cursor:pointer;line-height:1">×</button>
+      </div>
+      <div id="tl-banner-popup-body" style="overflow-y:auto;padding:12px 20px 20px;flex:1"></div>
+    </div>
   </div>`;
+
+
 
   // ── score card grid ──
   const cards = LEADS.map(lead=>{
@@ -1914,6 +1963,40 @@ function renderAlerts(){
     + section('No Progress This Week','⏸️','#7c3aed','#f5f3ff',noMove,'')
     + section('Due Within 14 Days','📅','#0369a1','#eff6ff',nearDue,'');
 }
+
+// ── Banner stat popup ─────────────────────────────────────────────────────
+window.openBannerPopup = function(label) {
+  const groups = window._tlStatGroups;
+  if (!groups || !groups[label]) return;
+  const items = groups[label];
+  const overlay = document.getElementById('tl-banner-popup-overlay');
+  if (!overlay) return;
+
+  document.getElementById('tl-banner-popup-title').textContent = label + ' (' + items.length + ')';
+
+  const LEAD_COLORS_MAP = {Obada:'#3b82f6',Moazzam:'#8b5cf6',Eid:'#f59e0b',Saed:'#10b981',Nora:'#ec4899','Not Assigned':'#94a3b8'};
+  const rows = items.map(d => {
+    const col = LEAD_COLORS_MAP[d.lead] || '#94a3b8';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="width:28px;height:28px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${(d.lead||'?').slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.name}</div>
+        <div style="font-size:11px;color:${col};margin-top:1px">${d.lead || 'Not Assigned'}</div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:#94a3b8;flex-shrink:0">${d.pct}%</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('tl-banner-popup-body').innerHTML = rows ||
+    '<div style="color:#94a3b8;text-align:center;padding:20px">No items</div>';
+
+  overlay.style.display = 'flex';
+};
+
+window.closeBannerPopup = function() {
+  const overlay = document.getElementById('tl-banner-popup-overlay');
+  if (overlay) overlay.style.display = 'none';
+};
 </script>
 <footer>Ideal Innovation House &nbsp;|&nbsp; Empowering Innovation, Enriching Lives &nbsp;|&nbsp; iih.ai &nbsp;|&nbsp; MOMAH AI Solutions — Jun 2026</footer>
 </body>
