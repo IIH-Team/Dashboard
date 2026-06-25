@@ -275,6 +275,7 @@
   <div class="nav-tab pm" onclick="showSection('teamlens')">👥 Team Lens</div>
   <div class="nav-tab pm" onclick="showSection('pivot')">📊 Pivot</div>
   <div class="nav-tab pm" onclick="showSection('alerts')">⚠️ Alerts</div>
+  <div class="nav-tab pm" onclick="showSection('tasks')">✅ Tasks</div>
 </div>
 
 <div class="main">
@@ -736,6 +737,97 @@
     <div style="font-size:13px;color:#64748b;margin-top:2px">Solutions that need your attention — updated from live data</div>
   </div>
   <div id="pm-alerts-body"></div>
+</div>
+
+<!-- == PM: LIVE TASKS ===================================================== -->
+<div class="section" id="sec-tasks" style="padding:24px 28px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:18px;font-weight:700;color:#1e293b">✅ Live Tasks</div>
+      <div style="font-size:13px;color:#64748b;margin-top:2px">Real-time task tracker for the team -- updates instantly, completely separate from the weekly portfolio data above</div>
+    </div>
+    <button onclick="window.openTaskForm()" style="padding:9px 18px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:var(--green);color:#fff">+ New Task</button>
+  </div>
+
+  <div id="tasks-stats" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap"></div>
+
+  <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+    <input id="tasks-search" type="text" placeholder="Search tasks..." oninput="window.renderTasks()" style="flex:1;min-width:160px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+    <select id="tasks-filter-assignee" onchange="window.renderTasks()" style="padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px"><option value="">All Assignees</option></select>
+    <select id="tasks-filter-status" onchange="window.renderTasks()" style="padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+      <option value="">All Status</option>
+      <option value="open">Open</option>
+      <option value="done">Done</option>
+    </select>
+    <select id="tasks-filter-priority" onchange="window.renderTasks()" style="padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+      <option value="">All Priorities</option>
+      <option value="urgent">Urgent</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+  </div>
+
+  <div id="tasks-list-body" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+    <div style="padding:30px;text-align:center;color:#94a3b8;font-size:13px">Connecting to live database...</div>
+  </div>
+</div>
+
+<!-- Task add / edit modal -->
+<div id="task-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:24px;width:460px;max-width:92vw;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div id="task-modal-title" style="font-size:16px;font-weight:700;color:#1e293b">New Task</div>
+      <button onclick="window.closeTaskForm()" style="border:none;background:none;font-size:20px;cursor:pointer;color:#94a3b8">&times;</button>
+    </div>
+    <input type="hidden" id="task-id">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Title</label>
+        <input id="task-title" type="text" placeholder="e.g. Send updated BRD to Business Owner" style="width:100%;padding:9px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1">
+          <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Assignee</label>
+          <input id="task-assignee" list="task-assignee-options" placeholder="Name" style="width:100%;padding:9px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+          <datalist id="task-assignee-options">
+            <option value="Obada"></option><option value="Moazzam"></option><option value="Eid"></option><option value="Saed"></option><option value="Nora"></option>
+          </datalist>
+        </div>
+        <div style="flex:1">
+          <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Priority</label>
+          <select id="task-priority" style="width:100%;padding:9px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1">
+          <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Project / Tag</label>
+          <input id="task-project" list="task-project-options" placeholder="e.g. Policy AI Lab" style="width:100%;padding:9px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+          <datalist id="task-project-options"></datalist>
+        </div>
+        <div style="flex:1">
+          <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Due Date</label>
+          <input id="task-due" type="date" style="width:100%;padding:9px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Notes / Comments</label>
+        <textarea id="task-notes" rows="3" placeholder="Any details, links, blockers..." style="width:100%;padding:9px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:20px">
+      <button id="task-delete-btn" onclick="window.deleteTaskFromForm()" style="display:none;padding:9px 16px;border:1px solid var(--red);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--red)">Delete</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button onclick="window.closeTaskForm()" style="padding:9px 16px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#475569">Cancel</button>
+        <button onclick="window.saveTaskFromForm()" style="padding:9px 18px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:var(--green);color:#fff">Save</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1555,6 +1647,7 @@ function showSection(id) {
   if(id==='teamlens') renderTeamLens();
   if(id==='pivot') renderPivot();
   if(id==='alerts') renderAlerts();
+  if(id==='tasks' && window.renderTasks) window.renderTasks();
 }
 
 // ── PM VIEWS (pct values are 0–100 in DATA) ──────────────────────────────────
@@ -1998,6 +2091,223 @@ window.closeBannerPopup = function() {
   if (overlay) overlay.style.display = 'none';
 };
 </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+  onSnapshot, serverTimestamp, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// This Firestore project is dedicated to live task data ONLY.
+// It is completely separate from the DATA array above, which is
+// regenerated weekly from the Excel portfolio file. Re-publishing this
+// HTML file will never touch or overwrite anything saved here.
+const firebaseConfig = {
+  apiKey: "AIzaSyBgG5jicLNMKf37MF-CfMs1-luCJAEGhxc",
+  authDomain: "iih-team-tasks.firebaseapp.com",
+  projectId: "iih-team-tasks",
+  storageBucket: "iih-team-tasks.firebasestorage.app",
+  messagingSenderId: "903530648525",
+  appId: "1:903530648525:web:71cc32d3fb7affc30eaa84",
+  measurementId: "G-6N3D8RKG35"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const tasksCol = collection(db, "iih_team_tasks");
+
+let TASKS = [];
+let tasksLoaded = false;
+
+onSnapshot(query(tasksCol, orderBy("createdAt", "desc")), (snap) => {
+  TASKS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  tasksLoaded = true;
+  populateTaskFilters();
+  const sec = document.getElementById('sec-tasks');
+  if (sec && sec.classList.contains('active')) window.renderTasks();
+}, (err) => {
+  console.error("Firestore error:", err);
+  const body = document.getElementById('tasks-list-body');
+  if (body) body.innerHTML = '<div style="padding:30px;text-align:center;color:var(--red);font-size:13px">Could not connect to the live database. Check your internet connection or Firestore security rules.</div>';
+});
+
+function populateTaskFilters() {
+  const sel = document.getElementById('tasks-filter-assignee');
+  if (!sel) return;
+  const current = sel.value;
+  const names = Array.from(new Set(TASKS.map(t => t.assignee).filter(Boolean))).sort();
+  sel.innerHTML = '<option value="">All Assignees</option>' + names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  sel.value = current;
+}
+
+function isOverdue(t) {
+  if (!t.dueDate || t.status === 'done') return false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return new Date(t.dueDate) < today;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+const PRIORITY_COLORS = { urgent: 'var(--red)', high: 'var(--amber)', medium: 'var(--blue)', low: 'var(--gray)' };
+const PRIORITY_LABEL = { urgent: 'Urgent', high: 'High', medium: 'Medium', low: 'Low' };
+
+window.renderTasks = function() {
+  const body = document.getElementById('tasks-list-body');
+  const stats = document.getElementById('tasks-stats');
+  if (!body || !stats) return;
+
+  if (!tasksLoaded) {
+    body.innerHTML = '<div style="padding:30px;text-align:center;color:#94a3b8;font-size:13px">Connecting to live database...</div>';
+    return;
+  }
+
+  const search = (document.getElementById('tasks-search')?.value || '').toLowerCase();
+  const fAssignee = document.getElementById('tasks-filter-assignee')?.value || '';
+  const fStatus = document.getElementById('tasks-filter-status')?.value || '';
+  const fPriority = document.getElementById('tasks-filter-priority')?.value || '';
+
+  let list = TASKS.filter(t => {
+    if (search && !(`${t.title||''} ${t.project||''} ${t.notes||''}`.toLowerCase().includes(search))) return false;
+    if (fAssignee && t.assignee !== fAssignee) return false;
+    if (fStatus && t.status !== fStatus) return false;
+    if (fPriority && t.priority !== fPriority) return false;
+    return true;
+  });
+
+  const total = TASKS.length;
+  const open = TASKS.filter(t => t.status !== 'done').length;
+  const overdue = TASKS.filter(isOverdue).length;
+  const done = TASKS.filter(t => t.status === 'done').length;
+
+  stats.innerHTML = `
+    <div style="flex:1;min-width:120px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px">
+      <div style="font-size:22px;font-weight:700;color:var(--navy)">${total}</div>
+      <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em">Total</div>
+    </div>
+    <div style="flex:1;min-width:120px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px">
+      <div style="font-size:22px;font-weight:700;color:var(--blue)">${open}</div>
+      <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em">Open</div>
+    </div>
+    <div style="flex:1;min-width:120px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px">
+      <div style="font-size:22px;font-weight:700;color:var(--red)">${overdue}</div>
+      <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em">Overdue</div>
+    </div>
+    <div style="flex:1;min-width:120px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px">
+      <div style="font-size:22px;font-weight:700;color:var(--green)">${done}</div>
+      <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.04em">Done</div>
+    </div>`;
+
+  if (!list.length) {
+    body.innerHTML = '<div style="padding:30px;text-align:center;color:#94a3b8;font-size:13px">No tasks match your filters.</div>';
+    return;
+  }
+
+  list.sort((a,b) => {
+    if (a.status !== b.status) return a.status === 'done' ? 1 : -1;
+    const da = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+    const dbb = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+    return da - dbb;
+  });
+
+  body.innerHTML = list.map(t => {
+    const overdueFlag = isOverdue(t);
+    const doneFlag = t.status === 'done';
+    return `
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid #eef1f5;${doneFlag?'opacity:.6':''}">
+      <input type="checkbox" ${doneFlag?'checked':''} onclick="window.toggleTaskDone('${t.id}', this.checked)" style="margin-top:3px;width:17px;height:17px;cursor:pointer;accent-color:var(--green)">
+      <div style="flex:1;min-width:0;cursor:pointer" onclick="window.openTaskForm('${t.id}')">
+        <div style="font-size:13.5px;font-weight:600;color:#1e293b;${doneFlag?'text-decoration:line-through':''}">${escapeHtml(t.title)}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap">
+          ${t.assignee?`<span>` + '\u{1F464}' + ` ${escapeHtml(t.assignee)}</span>`:''}
+          ${t.project?`<span>` + '\u{1F3F7}\u{FE0F}' + ` ${escapeHtml(t.project)}</span>`:''}
+          ${t.dueDate?`<span style="${overdueFlag?'color:var(--red);font-weight:700':''}">` + '\u{1F4C5}' + ` ${t.dueDate}${overdueFlag?' (overdue)':''}</span>`:''}
+        </div>
+        ${t.notes?`<div style="font-size:12px;color:#94a3b8;margin-top:4px">${escapeHtml(t.notes)}</div>`:''}
+      </div>
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:99px;color:#fff;background:${PRIORITY_COLORS[t.priority]||'var(--gray)'};white-space:nowrap">${PRIORITY_LABEL[t.priority]||'Medium'}</span>
+    </div>`;
+  }).join('');
+};
+
+window.toggleTaskDone = async function(id, checked) {
+  try {
+    await updateDoc(doc(db, "iih_team_tasks", id), {
+      status: checked ? 'done' : 'open',
+      completedAt: checked ? serverTimestamp() : null
+    });
+  } catch(e) { console.error(e); alert('Could not update task - check your connection.'); }
+};
+
+window.openTaskForm = function(id) {
+  const overlay = document.getElementById('task-modal-overlay');
+  document.getElementById('task-id').value = id || '';
+  document.getElementById('task-delete-btn').style.display = id ? 'inline-block' : 'none';
+  document.getElementById('task-modal-title').textContent = id ? 'Edit Task' : 'New Task';
+
+  const dl = document.getElementById('task-project-options');
+  if (dl && typeof SOLUTION_ORDER !== 'undefined' && dl.children.length === 0) {
+    dl.innerHTML = SOLUTION_ORDER.map(n => `<option value="${escapeHtml(n)}"></option>`).join('');
+  }
+
+  if (id) {
+    const t = TASKS.find(x => x.id === id) || {};
+    document.getElementById('task-title').value = t.title || '';
+    document.getElementById('task-assignee').value = t.assignee || '';
+    document.getElementById('task-priority').value = t.priority || 'medium';
+    document.getElementById('task-project').value = t.project || '';
+    document.getElementById('task-due').value = t.dueDate || '';
+    document.getElementById('task-notes').value = t.notes || '';
+  } else {
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-assignee').value = '';
+    document.getElementById('task-priority').value = 'medium';
+    document.getElementById('task-project').value = '';
+    document.getElementById('task-due').value = '';
+    document.getElementById('task-notes').value = '';
+  }
+  overlay.style.display = 'flex';
+};
+
+window.closeTaskForm = function() {
+  document.getElementById('task-modal-overlay').style.display = 'none';
+};
+
+window.saveTaskFromForm = async function() {
+  const id = document.getElementById('task-id').value;
+  const title = document.getElementById('task-title').value.trim();
+  if (!title) { alert('Please enter a task title.'); return; }
+  const payload = {
+    title,
+    assignee: document.getElementById('task-assignee').value.trim(),
+    priority: document.getElementById('task-priority').value,
+    project: document.getElementById('task-project').value.trim(),
+    dueDate: document.getElementById('task-due').value || null,
+    notes: document.getElementById('task-notes').value.trim(),
+    updatedAt: serverTimestamp()
+  };
+  try {
+    if (id) {
+      await updateDoc(doc(db, "iih_team_tasks", id), payload);
+    } else {
+      await addDoc(tasksCol, { ...payload, status: 'open', createdAt: serverTimestamp() });
+    }
+    window.closeTaskForm();
+  } catch(e) { console.error(e); alert('Could not save task - check your connection.'); }
+};
+
+window.deleteTaskFromForm = async function() {
+  const id = document.getElementById('task-id').value;
+  if (!id) return;
+  if (!confirm('Delete this task? This cannot be undone.')) return;
+  try {
+    await deleteDoc(doc(db, "iih_team_tasks", id));
+    window.closeTaskForm();
+  } catch(e) { console.error(e); alert('Could not delete task - check your connection.'); }
+};
+</script>
+
 <footer>Ideal Innovation House &nbsp;|&nbsp; Empowering Innovation, Enriching Lives &nbsp;|&nbsp; iih.ai &nbsp;|&nbsp; MOMAH AI Solutions — Jun 2026</footer>
 </body>
 </html>
