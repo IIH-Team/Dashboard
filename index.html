@@ -283,8 +283,9 @@
 
 <!-- OVERVIEW -->
 <div class="section active" id="sec-overview">
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('overview-capture-zone')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy as Image</button>
+  <div style="position:relative">
+  <div id="ov-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('ov-shot-btn').style.opacity='1';document.getElementById('ov-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('ov-shot-btn').style.opacity='0';document.getElementById('ov-shot-btn').style.pointerEvents='none'">
+    <button id="ov-shot-btn" onclick="captureZone('overview-capture-zone')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy as Image</button>
   </div>
   <div id="overview-capture-zone">
   <div class="kpi-row">
@@ -316,12 +317,14 @@
     <div id="highlights-list"></div>
   </div>
   </div>
+  </div>
 </div>
 
 <!-- PORTFOLIO TABLE -->
 <div class="section" id="sec-portfolio">
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('main-table')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy Full Table</button>
+  <div style="position:relative">
+  <div id="pf-full-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('pf-full-shot-btn').style.opacity='1';document.getElementById('pf-full-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('pf-full-shot-btn').style.opacity='0';document.getElementById('pf-full-shot-btn').style.pointerEvents='none'">
+    <button id="pf-full-shot-btn" onclick="captureZone('main-table')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy Full Table</button>
   </div>
   <div id="portfolio-main-zone">
   <div class="table-wrap">
@@ -356,10 +359,12 @@
     </table>
   </div>
   </div>
+  </div>
 
   <!-- SPLIT TABLES FOR PPT EXPORT -->
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('split-table-1')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy Part 1</button>
+  <div style="position:relative">
+  <div id="pf-p1-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('pf-p1-shot-btn').style.opacity='1';document.getElementById('pf-p1-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('pf-p1-shot-btn').style.opacity='0';document.getElementById('pf-p1-shot-btn').style.pointerEvents='none'">
+    <button id="pf-p1-shot-btn" onclick="captureZone('split-table-1')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy Part 1</button>
   </div>
   <div id="portfolio-split1-zone">
   <div class="table-wrap">
@@ -380,9 +385,11 @@
     </table>
   </div>
   </div>
+  </div>
 
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('split-table-2')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy Part 2</button>
+  <div style="position:relative">
+  <div id="pf-p2-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('pf-p2-shot-btn').style.opacity='1';document.getElementById('pf-p2-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('pf-p2-shot-btn').style.opacity='0';document.getElementById('pf-p2-shot-btn').style.pointerEvents='none'">
+    <button id="pf-p2-shot-btn" onclick="captureZone('split-table-2')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy Part 2</button>
   </div>
   <div id="portfolio-split2-zone">
   <div class="table-wrap">
@@ -403,6 +410,7 @@
     </table>
   </div>
   </div>
+  </div>
 </div>
 
 <!-- PROJECTS (no timeline) -->
@@ -421,8 +429,9 @@
 
 <!-- WEEKLY DELTA -->
 <div class="section" id="sec-weekly">
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('weekly-top-zone')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy (Moved + Summary)</button>
+  <div style="position:relative">
+  <div id="wk-top-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('wk-top-shot-btn').style.opacity='1';document.getElementById('wk-top-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('wk-top-shot-btn').style.opacity='0';document.getElementById('wk-top-shot-btn').style.pointerEvents='none'">
+    <button id="wk-top-shot-btn" onclick="captureZone('weekly-top-zone')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy (Moved + Summary)</button>
   </div>
   <div id="weekly-top-zone" class="weekly-grid">
     <div class="weekly-card">
@@ -442,9 +451,11 @@
       </div>
     </div>
   </div>
+  </div>
 
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('weekly-full-table')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy Full Table</button>
+  <div style="position:relative">
+  <div id="wk-full-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('wk-full-shot-btn').style.opacity='1';document.getElementById('wk-full-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('wk-full-shot-btn').style.opacity='0';document.getElementById('wk-full-shot-btn').style.pointerEvents='none'">
+    <button id="wk-full-shot-btn" onclick="captureZone('weekly-full-table')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy Full Table</button>
   </div>
   <div id="weekly-full-zone">
   <div class="table-wrap">
@@ -461,10 +472,12 @@
     </table>
   </div>
   </div>
+  </div>
 
   <!-- SPLIT TABLES FOR PPT EXPORT -->
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('weekly-split-table-1')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy Part 1</button>
+  <div style="position:relative">
+  <div id="wk-p1-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('wk-p1-shot-btn').style.opacity='1';document.getElementById('wk-p1-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('wk-p1-shot-btn').style.opacity='0';document.getElementById('wk-p1-shot-btn').style.pointerEvents='none'">
+    <button id="wk-p1-shot-btn" onclick="captureZone('weekly-split-table-1')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy Part 1</button>
   </div>
   <div id="weekly-split1-zone">
   <div class="table-wrap">
@@ -481,9 +494,11 @@
     </table>
   </div>
   </div>
+  </div>
 
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-    <button onclick="captureZone('weekly-split-table-2')" style="background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.15)">📷 Copy Part 2</button>
+  <div style="position:relative">
+  <div id="wk-p2-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('wk-p2-shot-btn').style.opacity='1';document.getElementById('wk-p2-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('wk-p2-shot-btn').style.opacity='0';document.getElementById('wk-p2-shot-btn').style.pointerEvents='none'">
+    <button id="wk-p2-shot-btn" onclick="captureZone('weekly-split-table-2')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy Part 2</button>
   </div>
   <div id="weekly-split2-zone">
   <div class="table-wrap">
@@ -498,6 +513,7 @@
       </tr></thead>
       <tbody id="wc-table-body-2"></tbody>
     </table>
+  </div>
   </div>
   </div>
 </div>
