@@ -528,6 +528,8 @@
 <div class="section" id="sec-report">
   <div class="report-wrap" id="report-wrap" style="position:relative">
 
+  <button id="report-export-word-btn" onclick="exportReportWord()" title="Export full narrative report (EN+AR) as a Word file" style="position:absolute;top:14px;right:14px;z-index:40;background:var(--navy);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📥 Export as Word</button>
+
   <div id="report-lock" style="position:absolute;inset:0;z-index:50">
     <div style="position:absolute;inset:0;backdrop-filter:blur(10px);background:rgba(11,15,26,0.92);border-radius:10px"></div>
     <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:12px;padding:32px 36px;width:300px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3)">
@@ -551,6 +553,11 @@
     <li>Risk profile: <strong id="rep-en-risk-summary"></strong> (see Sector Progress &amp; Risk Assessment below for details).</li>
   </ul>
 
+  <div id="rep-zoneA-wrap" style="position:relative">
+  <div id="rep-zoneA-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('rep-zoneA-shot-btn').style.opacity='1';document.getElementById('rep-zoneA-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('rep-zoneA-shot-btn').style.opacity='0';document.getElementById('rep-zoneA-shot-btn').style.pointerEvents='none'">
+    <button id="rep-zoneA-shot-btn" onclick="captureZone('rep-zoneA-shot')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy</button>
+  </div>
+  <div id="rep-zoneA-shot">
   <div class="banner">
     <div class="banner-accent"></div>
     <div class="banner-inner">
@@ -591,7 +598,14 @@
       <tbody id="rep-table-body"></tbody>
     </table>
   </div>
+  </div>
+  </div>
 
+  <div id="rep-zoneB-wrap" style="position:relative">
+  <div id="rep-zoneB-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('rep-zoneB-shot-btn').style.opacity='1';document.getElementById('rep-zoneB-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('rep-zoneB-shot-btn').style.opacity='0';document.getElementById('rep-zoneB-shot-btn').style.pointerEvents='none'">
+    <button id="rep-zoneB-shot-btn" onclick="captureZone('rep-zoneB-shot')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy</button>
+  </div>
+  <div id="rep-zoneB-shot">
   <div class="banner">
     <div class="banner-accent"></div>
     <div class="banner-inner">
@@ -624,8 +638,14 @@
       </div>
     </div>
   </div>
+  </div>
+  </div>
 
-  <div class="table-wrap">
+  <div id="rep-zoneC-wrap" style="position:relative">
+  <div id="rep-zoneC-shot-zone" style="position:absolute;top:0;right:0;width:64px;height:64px;z-index:20" onmouseover="document.getElementById('rep-zoneC-shot-btn').style.opacity='1';document.getElementById('rep-zoneC-shot-btn').style.pointerEvents='auto'" onmouseout="document.getElementById('rep-zoneC-shot-btn').style.opacity='0';document.getElementById('rep-zoneC-shot-btn').style.pointerEvents='none'">
+    <button id="rep-zoneC-shot-btn" onclick="captureZone('rep-zoneC-shot')" title="Copy as image" style="opacity:0;pointer-events:none;transition:opacity .15s;position:absolute;top:0;right:0;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:11px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.25)">📷 Copy</button>
+  </div>
+  <div id="rep-zoneC-shot" class="table-wrap">
     <div class="table-header"><h3>Full Comparison</h3></div>
     <table>
       <thead><tr>
@@ -637,6 +657,7 @@
       </tr></thead>
       <tbody id="rep-wc-table-body"></tbody>
     </table>
+  </div>
   </div>
 
   <h2 class="report-h2">SECTOR PROGRESS &amp; RISK ASSESSMENT</h2>
@@ -1155,10 +1176,115 @@ async function unlockReport() {
     }
     document.getElementById('report-lock').style.display = 'none';
     errEl.style.display = 'none';
+    window.reportUnlocked = true;
   } catch (e) {
     errEl.style.display = 'block';
   }
 }
+
+// ===== Export as Word (.doc) — narrative content only, EN+AR (text-only, no embedded images) =====
+// الجداول مستثناة تماماً ويُترك مكانها سطر "[Screenshot]" — المستخدم يلتقطها يدوياً بأزرار
+// 📷 Copy المخصصة (Zone A / Zone B / Zone C) ويلصقها بنفسه. راجع طلب المستخدم 30 يونيو 2026.
+window.exportReportWord = function () {
+  if (!window.reportUnlocked) {
+    alert('Please unlock the Report Email tab with the password first.');
+    return;
+  }
+
+  const cs = getComputedStyle(document.documentElement);
+  const colorMap = {
+    navy: cs.getPropertyValue('--navy').trim() || '#1B2A4A',
+    navy2: cs.getPropertyValue('--navy2').trim() || '#14213D',
+    green: cs.getPropertyValue('--green').trim() || '#00845A',
+    pink: cs.getPropertyValue('--pink').trim() || '#C0266A',
+    blue: cs.getPropertyValue('--blue').trim() || '#378ADD',
+    purple: cs.getPropertyValue('--purple').trim() || '#7F77DD',
+    amber: cs.getPropertyValue('--amber').trim() || '#E88B00',
+    red: cs.getPropertyValue('--red').trim() || '#C0392B',
+    bg: cs.getPropertyValue('--bg').trim() || '#F4F6F9',
+    border: cs.getPropertyValue('--border').trim() || '#D8E2EC',
+    text3: cs.getPropertyValue('--text3').trim() || '#637080'
+  };
+
+  const wrap = document.getElementById('report-wrap');
+  const root = document.createElement('div');
+
+  function placeholderNote(label) {
+    const p = document.createElement('p');
+    p.style.cssText = 'margin:10px 0;padding:8px 10px;border:1px dashed ' + colorMap.border + ';border-radius:6px;color:' + colorMap.text3 + ';font-size:10pt;font-style:italic';
+    p.textContent = '[📷 Screenshot — ' + label + ' — paste here]';
+    return p;
+  }
+
+  // Build a clean text-only copy: keep narrative sections (lead lines, headings, lists,
+  // sector text, final comments, targets). Tables/KPI/banners are replaced with a short
+  // placeholder line — the person pastes their own screenshot there (taken via the
+  // Zone A / Zone B / Zone C 📷 Copy buttons on this tab).
+  function processContainer(srcContainer, destContainer) {
+    Array.from(srcContainer.children).forEach(child => {
+      if (!child.tagName) return;
+      if (child.id === 'report-lock' || child.id === 'report-export-word-btn') return;
+      if (child.id === 'rep-zoneA-wrap') { destContainer.appendChild(placeholderNote('AI Solutions Portfolio (header + KPIs + table)')); return; }
+      if (child.id === 'rep-zoneB-wrap') { destContainer.appendChild(placeholderNote('Weekly Comparison (header + Solutions Moved + Summary)')); return; }
+      if (child.id === 'rep-zoneC-wrap') { destContainer.appendChild(placeholderNote('Full Comparison table')); return; }
+      if (child.classList && child.classList.contains('kpi-row')) return;
+      if (child.classList && child.classList.contains('table-wrap')) return;
+      if (child.classList && child.classList.contains('weekly-grid')) return;
+      if (child.classList && child.classList.contains('banner')) return;
+      if (child.tagName === 'DIV' && child.getAttribute('dir') === 'rtl') {
+        const rtlDiv = document.createElement('div');
+        rtlDiv.setAttribute('dir', 'rtl');
+        rtlDiv.style.textAlign = 'right';
+        processContainer(child, rtlDiv);
+        destContainer.appendChild(rtlDiv);
+        return;
+      }
+      destContainer.appendChild(child.cloneNode(true));
+    });
+  }
+  processContainer(wrap, root);
+
+  let bodyHtml = root.innerHTML;
+  // replace CSS var() color references with literal hex so Word renders them correctly
+  bodyHtml = bodyHtml.replace(/var\(--([a-zA-Z0-9]+)\)/g, (m, name) => colorMap[name] || '#000000');
+
+  const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  const fullHtml = `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>MOMAH AI Solutions — Weekly Report</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+<style>
+  @page { size: 8.5in 11in; margin: 1in 1in 1in 1in; }
+  body { font-family: Calibri, Arial, "Segoe UI", Tahoma, sans-serif; font-size: 11pt; color: #1f2937; line-height: 1.5; }
+  h1,h2,h3 { color: ${colorMap.navy}; }
+  .report-h2 { font-size: 15pt; font-weight: 700; border-bottom: 2px solid ${colorMap.border}; padding-bottom: 6px; margin: 22px 0 10px; }
+  .report-h3 { font-size: 12.5pt; font-weight: 700; margin: 16px 0 6px; }
+  .report-ul { margin: 0 0 10px 0; padding-left: 22px; }
+  .report-ul li { margin-bottom: 8px; }
+  .lead-line { margin: 4px 0; }
+  [dir="rtl"] { text-align: right; }
+  [dir="rtl"] .report-ul { padding-left: 0; padding-right: 22px; }
+</style>
+</head>
+<body>
+<h1 style="color:${colorMap.navy};border-bottom:3px solid ${colorMap.navy};padding-bottom:8px">MOMAH AI Solutions Dashboard — Weekly Progress Report</h1>
+<p style="color:${colorMap.text3};font-size:10pt;margin-top:0">Generated ${today}</p>
+${bodyHtml}
+</body>
+</html>`;
+
+  const blob = new Blob(['\ufeff' + fullHtml], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `MOMAH_Weekly_Report_${new Date().toISOString().slice(0, 10)}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+};
 
 // Portfolio table (full, with Minister Cockpit umbrella row shown)
 const repSortedRows = [...DATA].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
