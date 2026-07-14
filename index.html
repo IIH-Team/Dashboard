@@ -1423,12 +1423,12 @@ function renderRows(rows) {
     return tableRowHtml(d, isLastSub);
   }).join('');
 }
-function buildTable(filter='All', search='', sector='All', phase='All') {
+function buildTable(filter=[], search='', sector=[], phase=[]) {
   const tbody = document.getElementById('table-body');
   let rows = [...DATA].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
-  if(filter!=='All') rows = rows.filter(d=>d.risk===filter || d.isUmbrella);
-  if(sector!=='All') rows = rows.filter(d=>d.sector===sector);
-  if(phase!=='All') rows = rows.filter(d=>d.phase===phase);
+  if(filter.length) rows = rows.filter(d=>filter.includes(d.risk) || d.isUmbrella);
+  if(sector.length) rows = rows.filter(d=>sector.includes(d.sector));
+  if(phase.length) rows = rows.filter(d=>phase.includes(d.phase));
   if(search) rows = rows.filter(d=>d.name.toLowerCase().includes(search.toLowerCase())||d.sector.toLowerCase().includes(search.toLowerCase()));
   tbody.innerHTML = renderRows(rows);
 }
@@ -1444,29 +1444,43 @@ function buildSplitTables() {
   document.getElementById('table-body-2').innerHTML = renderRows(part2);
 }
 
-let activeRisk = 'All';
-let activeSector3 = 'All';
-let activePhase = 'All';
+// Multi-select filter toggle helper (used by Portfolio's .filter-btn rows and Projects/Projects2's .sector-pill navs).
+// `arr` is mutated in place (push/splice) so callers keep the same reference across clicks.
+// Clicking "All" clears the selection. Clicking a value toggles it in/out of the selection;
+// if the selection becomes empty, "All" is re-activated automatically. Multiple values can be active together.
+function toggleMultiFilter(rowSel, itemClass, el, value, arr) {
+  const row = document.querySelector(rowSel);
+  const allEl = row.querySelector('.' + itemClass);
+  if (value === 'All') {
+    arr.length = 0;
+    row.querySelectorAll('.' + itemClass).forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+    return;
+  }
+  const idx = arr.indexOf(value);
+  if (idx > -1) { arr.splice(idx,1); el.classList.remove('active'); }
+  else { arr.push(value); el.classList.add('active'); }
+  if (arr.length === 0) allEl.classList.add('active');
+  else allEl.classList.remove('active');
+}
+
+let activeRisk = [];
+let activeSector3 = [];
+let activePhase = [];
 const PHASES = ["All", "Scoping", "Requirements Gathering", "BRD In Progress", "BRD Submitted", "BRD Completed"];
 
 function filterRisk(r, btn) {
-  activeRisk = r;
-  document.querySelectorAll('#portfolio-risk-row .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  toggleMultiFilter('#portfolio-risk-row', 'filter-btn', btn, r, activeRisk);
   buildTable(activeRisk, document.getElementById('table-search').value, activeSector3, activePhase);
 }
 function filterTable(v) { buildTable(activeRisk, v, activeSector3, activePhase); }
 
 function filterSector3(s, btn) {
-  activeSector3 = s;
-  document.querySelectorAll('#portfolio-sector-row .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  toggleMultiFilter('#portfolio-sector-row', 'filter-btn', btn, s, activeSector3);
   buildTable(activeRisk, document.getElementById('table-search').value, activeSector3, activePhase);
 }
 function filterPhase(p, btn) {
-  activePhase = p;
-  document.querySelectorAll('#portfolio-phase-row .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  toggleMultiFilter('#portfolio-phase-row', 'filter-btn', btn, p, activePhase);
   buildTable(activeRisk, document.getElementById('table-search').value, activeSector3, activePhase);
 }
 function buildPortfolioFilterRows() {
@@ -1478,7 +1492,7 @@ function buildPortfolioFilterRows() {
 buildPortfolioFilterRows();
 
 // SECTOR NAV + CARDS
-let activeSector = 'All';
+let activeSector = [];
 function buildSectorNav() {
   const html = SECTORS.map(s=>`<div class="sector-pill${s==='All'?' active':''}" onclick="setSector('${s}',this)">${s}</div>`).join('');
   document.getElementById('sector-nav').innerHTML = html;
@@ -1488,31 +1502,23 @@ function buildSectorNav() {
   document.getElementById('risk-nav2').innerHTML = labelSpan('By Risk:') + RISKS.map(r=>`<div class="sector-pill${r==='All'?' active':''}" onclick="setRisk2('${r}',this)">${r}</div>`).join('');
 }
 function setSector(s, el) {
-  activeSector = s;
-  document.querySelectorAll('#sector-nav .sector-pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
+  toggleMultiFilter('#sector-nav', 'sector-pill', el, s, activeSector);
   buildCards();
 }
-let activeSector2 = 'All';
-let activePhase2 = 'All';
-let activeRisk2 = 'All';
+let activeSector2 = [];
+let activePhase2 = [];
+let activeRisk2 = [];
 const RISKS = ["All", "On Track", "At Risk", "Delayed"];
 function setSector2(s, el) {
-  activeSector2 = s;
-  document.querySelectorAll('#sector-nav2 .sector-pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
+  toggleMultiFilter('#sector-nav2', 'sector-pill', el, s, activeSector2);
   buildCards2();
 }
 function setPhase2(p, el) {
-  activePhase2 = p;
-  document.querySelectorAll('#phase-nav2 .sector-pill').forEach(pl=>pl.classList.remove('active'));
-  el.classList.add('active');
+  toggleMultiFilter('#phase-nav2', 'sector-pill', el, p, activePhase2);
   buildCards2();
 }
 function setRisk2(r, el) {
-  activeRisk2 = r;
-  document.querySelectorAll('#risk-nav2 .sector-pill').forEach(pl=>pl.classList.remove('active'));
-  el.classList.add('active');
+  toggleMultiFilter('#risk-nav2', 'sector-pill', el, r, activeRisk2);
   buildCards2();
 }
 function buildCardHtml(d, withTimeline) {
@@ -1549,14 +1555,14 @@ function buildCardHtml(d, withTimeline) {
     </div>`;
 }
 function buildCards() {
-  const rawItems = (activeSector==='All' ? DATA : DATA.filter(d=>d.sector===activeSector)).filter(d=>!d.isUmbrella);
+  const rawItems = (activeSector.length ? DATA.filter(d=>activeSector.includes(d.sector)) : DATA).filter(d=>!d.isUmbrella);
   const items = [...rawItems].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
   document.getElementById('projects-grid').innerHTML = items.map(d=>buildCardHtml(d, false)).join('');
 }
 function buildCards2() {
-  let rawItems = (activeSector2==='All' ? DATA : DATA.filter(d=>d.sector===activeSector2)).filter(d=>!d.isUmbrella);
-  if (activePhase2 !== 'All') rawItems = rawItems.filter(d=>d.phase===activePhase2);
-  if (activeRisk2 !== 'All') rawItems = rawItems.filter(d=>d.risk===activeRisk2);
+  let rawItems = (activeSector2.length ? DATA.filter(d=>activeSector2.includes(d.sector)) : DATA).filter(d=>!d.isUmbrella);
+  if (activePhase2.length) rawItems = rawItems.filter(d=>activePhase2.includes(d.phase));
+  if (activeRisk2.length) rawItems = rawItems.filter(d=>activeRisk2.includes(d.risk));
   const items = [...rawItems].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
   document.getElementById('projects-grid2').innerHTML = items.map(d=>buildCardHtml(d, true)).join('');
 }
