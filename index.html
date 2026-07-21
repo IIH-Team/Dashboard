@@ -100,7 +100,8 @@
   /* HIGHLIGHTS BOX */
   .highlights { background: #EAF3FB; border: 1px solid #B5D4F4; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; }
   .highlights h3 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
-  .highlight-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 13px; color: var(--text2); }
+  .highlight-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .highlight-item .hi-dot { margin-top: 5px; }
   .hi-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
 
   /* TABLE */
@@ -969,6 +970,11 @@ document.getElementById('live-date').textContent = new Date().toLocaleDateString
 const REAL_DATA = DATA.filter(d=>!d.isUmbrella && !SUB_PROJECTS['AI Legal Advisor v2.0'].includes(d.name));
 // RISK_DATA = REAL_DATA + Minister Intelligence Cockpit (= 26 عنصر) — يُستخدم لـ Risk Stack وأيضاً Avg Completion "Overall portfolio"
 const RISK_DATA = DATA.filter(d=>!SUB_PROJECTS['AI Legal Advisor v2.0'].includes(d.name));
+// HIGHLIGHT_POOL: مخصص لقسم "This Week's Highlights" فقط — يشمل REAL_DATA (25) + الـ5 فروع تبع
+// AI Legal Advisor v2.0 (30 بالمجموع)، عشان تحركات الفروع (Pleadings and Settlements، Policies and
+// Requirements...) تظهر بالـHighlights كإنجاز مستقل حتى لو مستثناة من REAL_DATA بباقي الإحصائيات
+// (Total/BRD/Sector/Phase تبقى REAL_DATA زي ما هي — القسم 5 بالمرجع). طُلب صراحة من المستخدم 21 يوليو 2026.
+const HIGHLIGHT_POOL = DATA.filter(d=>!d.isUmbrella);
 // Minister Intelligence Cockpit: pct مشتق ديناميكياً = متوسط أدواته الأربعة (Sentiment Pulse AI, Meeting Genius v2.0, Smart Scheduling, Directives Co-pilot)
 // قرار 16 يونيو 2026: يدخل بهذا الـ pct بحساب "Avg Completion / Overall portfolio" (26 عنصر)، نفس منطق Risk Stack
 const ministerCockpit = DATA.find(d => d.isUmbrella);
@@ -988,22 +994,25 @@ document.getElementById('risk-delayed').textContent = RISK_DATA.filter(d=>d.risk
 // لا تؤثر على حالة الـRisk الحقيقية بأي تاب/جدول آخر (Risk tab, Portfolio, Weekly Delta, Report Email تبقى صحيحة)
 const HIGHLIGHT_SUPPRESS = ['Roads Maintenance AI', 'Financial & Budgeting Co-pilot'];
 function buildHighlights() {
-  const moved = REAL_DATA.filter(d => d.pct !== (d.pctLastWeek ?? d.pct));
+  const moved = HIGHLIGHT_POOL.filter(d => d.pct !== (d.pctLastWeek ?? d.pct));
   const topMovers = [...moved]
     .filter(d => d.pct > (d.pctLastWeek ?? d.pct))
-    .sort((a,b) => (b.pct - (b.pctLastWeek ?? b.pct)) - (a.pct - (a.pctLastWeek ?? a.pct)))
-    .slice(0, 3);
+    .sort((a,b) => (b.pct - (b.pctLastWeek ?? b.pct)) - (a.pct - (a.pctLastWeek ?? a.pct)));
   const delayedNow = REAL_DATA.filter(d => d.risk === 'Delayed' && !HIGHLIGHT_SUPPRESS.includes(d.name));
   const atRiskNow = REAL_DATA.filter(d => d.risk === 'At Risk' && !HIGHLIGHT_SUPPRESS.includes(d.name));
+
+  const isLegalModule = d => SUB_PROJECTS['AI Legal Advisor v2.0'].includes(d.name);
 
   const items = [];
   topMovers.forEach(d => {
     const last = d.pctLastWeek ?? d.pct;
     const delta = d.pct - last;
-    items.push({color:'var(--green)', text:`${d.name} advanced from ${last}% → ${d.pct}% (+${delta}%)`});
+    const suffix = isLegalModule(d) ? ' <span style="color:var(--text3)">(AI Legal Advisor module)</span>' : '';
+    const phaseNote = ` — now at <b>${d.phase}</b>`;
+    items.push({color:'var(--green)', text:`<b>${d.name}</b>${suffix} advanced from ${last}% to <b>${d.pct}%</b> (+${delta}%)${phaseNote}`});
   });
-  delayedNow.forEach(d => items.push({color:'var(--red)', text:`${d.name} is Delayed${d.risks ? ' — ' + d.risks : ''}`}));
-  atRiskNow.forEach(d => items.push({color:'var(--amber)', text:`${d.name} is At Risk${d.risks ? ' — ' + d.risks : ''}`}));
+  delayedNow.forEach(d => items.push({color:'var(--red)', text:`<b>${d.name}</b> is Delayed${d.risks ? ' — ' + d.risks : ''}`}));
+  atRiskNow.forEach(d => items.push({color:'var(--amber)', text:`<b>${d.name}</b> is At Risk${d.risks ? ' — ' + d.risks : ''}`}));
 
   document.getElementById('highlights-list').innerHTML = items.length
     ? items.map(it => `<div class="highlight-item"><div class="hi-dot" style="background:${it.color}"></div><span>${it.text}</span></div>`).join('')
