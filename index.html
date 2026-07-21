@@ -1065,7 +1065,7 @@ function renderComparisonRows(rows) {
 // Display rows = REAL_DATA + Minister Intelligence Cockpit (display-only, dashes, excluded from all stats)
 // Display all 31 projects (incl. Minister Cockpit umbrella + AI Legal Advisor's 5 sub-projects)
 // with sector shading/connector lines, same as Portfolio tab.
-// NOTE: Improved/No Change/At 100% stats above remain computed from REAL_DATA only.
+// NOTE: Improved/No Change/At 100% stats above computed from HIGHLIGHT_POOL (21 يوليو 2026، راجع أعلاه).
 const comparisonRows = [...DATA].sort((a,b)=>SOLUTION_ORDER.indexOf(a.name)-SOLUTION_ORDER.indexOf(b.name));
 document.getElementById('wc-full-table-body').innerHTML = renderComparisonRows(comparisonRows);
 // Split for PowerPoint: Part 1 = HEM Office, Part 2 = rest
@@ -1316,15 +1316,18 @@ function buildMovedListHtml(rows) {
     </div>`;
   }).join('') : '<div style="font-size:12px;color:var(--text3);text-align:center;padding:20px 0">No changes recorded since last week</div>';
 }
-const movedThisWeek = REAL_DATA.filter(d => d.pct !== (d.pctLastWeek ?? d.pct));
+// 21 يوليو 2026: تُحسب من HIGHLIGHT_POOL (30 = REAL_DATA + فروع AI Legal الخمسة) بدل REAL_DATA —
+// نفس تعديل Highlights بالـOverview، بطلب صريح من المستخدم عشان تحركات فروع AI Legal تبان هون كمان.
+const movedThisWeek = HIGHLIGHT_POOL.filter(d => d.pct !== (d.pctLastWeek ?? d.pct));
 const movedListHtml = buildMovedListHtml(movedThisWeek);
 document.getElementById('weekly-moved-list').innerHTML = movedListHtml;
 document.getElementById('rep-weekly-moved-list').innerHTML = movedListHtml;
 
 // Summary cards — نفس الحساب لتاب Weekly Delta وتاب Report Email
-const improvedCount = REAL_DATA.filter(d => d.pct > (d.pctLastWeek ?? d.pct)).length;
-const noChangeCount = REAL_DATA.filter(d => d.pct === (d.pctLastWeek ?? d.pct)).length;
-const at100Count = REAL_DATA.filter(d => d.pct === 100).length;
+// 21 يوليو 2026: HIGHLIGHT_POOL بدل REAL_DATA (نفس السبب أعلاه، عشان يتطابق مع Solutions That Moved)
+const improvedCount = HIGHLIGHT_POOL.filter(d => d.pct > (d.pctLastWeek ?? d.pct)).length;
+const noChangeCount = HIGHLIGHT_POOL.filter(d => d.pct === (d.pctLastWeek ?? d.pct)).length;
+const at100Count = HIGHLIGHT_POOL.filter(d => d.pct === 100).length;
 document.getElementById('wc-improved').textContent = improvedCount;
 document.getElementById('wc-nochange').textContent = noChangeCount;
 document.getElementById('wc-at100').textContent = at100Count;
