@@ -1320,7 +1320,7 @@ document.getElementById('rep-weekly-moved-list').innerHTML = movedListHtml;
 
 // Summary cards — نفس الحساب لتاب Weekly Delta وتاب Report Email
 const improvedCount = [...REAL_DATA, ...DATA.filter(d => isSubProject(d.name))].filter(d => d.pct > (d.pctLastWeek ?? d.pct)).length;
-const noChangeCount = [...REAL_DATA, ...DATA.filter(d => isSubProject(d.name))].filter(d => d.pct === (d.pctLastWeek ?? d.pct)).length;
+const noChangeCount = REAL_DATA.filter(d => d.pct === (d.pctLastWeek ?? d.pct) && d.risk === 'On Track').length;
 const at100Count = REAL_DATA.filter(d => d.pct === 100).length;
 document.getElementById('wc-improved').textContent = improvedCount;
 document.getElementById('wc-nochange').textContent = noChangeCount;
